@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 98%;">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body style="height: 98%;">
+<div th:include="/common/common_head::onloadJs" ></div>
+ <div id="container" style="width:100%; height: 98%; float: left;"></div>
+</body>
+<script type="text/javascript">
+ /*<![CDATA[*/
+ 
+ function initData(data){
+   Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: data.month+'下料重量分布'
+    },
+    xAxis: {
+        categories: data.blanksubject,
+        title: {
+            text: '日期',
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '重量(吨)',
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+            }
+        },
+        stackLabels: {
+            enabled: true,
+            style: {
+                fontWeight: 'bold',
+                fontSize:'10px'
+                //color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+        }
+    },
+    legend: {
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 25,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+      //  borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>共: {point.stackTotal}',
+        style:{
+                  fontSize:'15px'
+              }
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black',
+                style:{
+                  fontSize:'8px',
+                  textOutline:'none'
+                 }
+            }
+        }
+    },
+    series: [{
+        name: '下料重量',
+        data: data.blank
+    }
+    ]
+  });
+  }
+          $(function(){
+           $.ajax({
+              url:'/hgerp/product/getProductDatab',
+              success:function(data){
+                 initData(data);
+              }
+           })
+        
+        })
+      /*]]>*/
+</script>
+</html>

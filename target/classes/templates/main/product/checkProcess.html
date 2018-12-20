@@ -1,0 +1,50 @@
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe">
+			<div class="fitem">
+				<label>选择工艺路线:</label>
+	<select class="easyui-combogrid" id="tempId" name="tempId"
+		 th:attr="url=${'/hgerp/process/getTempList'}"
+		 value="1" required="true" style="width:250px" data-options="
+			panelWidth: 500,
+			idField: 'id',
+			textField: 'tempName',
+			method: 'get',
+			columns: [[
+				{field:'tempName',title:'模板名称',width:120}
+			]],
+			onSelect:onSelect,
+			fitColumns: true
+		">
+	</select>
+		<input type="hidden" name="ids" th:value="${ids}"/>
+	</div>
+	<div class="fitem">
+				<label>选择具体工序:</label>
+	<input id="tempSonId" name="tempSonId" required="true"/>
+	</div>
+	<div class="fitem">
+		<label>选择状态:</label>
+		<select class="easyui-combobox" required="true" name="state">
+		<option value="3">正常工序</option>
+		<option value="10">外协</option>
+		<option value="11">调度</option>
+		<option value="4">检验</option>
+		<option value="6">待入库</option>
+		</select>
+	</div>		
+	</form>
+		<script type="text/javascript">
+		   function onSelect(index){
+		    var id = $('#tempId').combobox('getValue');
+		      $('#tempSonId').combobox({
+    url:'/hgerp/product/getTempSons?id='+id,
+    valueField:'id',
+    textField:'procName'
+});
+		   }
+		</script>
+</body>
+</html>

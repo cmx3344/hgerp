@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<div class="fitem">
+			<label>账号:</label> <input name="username" class="easyui-textbox" th:value="${bean?.username }" required="true"/>
+			<input type="hidden" th:value="${bean?.id}" name="id"/>
+			</div>
+			<div class="fitem">
+			<label>用户名:</label> <input name="userChnName" class="easyui-textbox" th:value="${bean?.userChnName }" required="true"/>
+			</div>
+			<div class="fitem">
+				<label>密码:</label> <input name="password" type="text" class="easyui-textbox" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>用户状态:</label>
+			<select class="easyui-combobox" name="locked" editable="false" style="width:200px;">
+			  <option value="启用" th:selected="${bean?.locked=='启用'}">启用</option>
+		      <option value="锁定" th:selected="${bean?.locked=='锁定'}">锁定</option>
+	        </select>
+	        </div>
+	        <div class="fitem">
+			 <label>部门:</label>
+			   <select name="depId" class="easyui-combobox" required="true">
+			     <option  th:each="n:${list}" th:value="${n.id}" th:text="${n.name }"></option>
+			   </select>
+	        </div>
+			<div class="fitem">
+				<label>电子邮箱:</label> <input name="email" class="easyui-textbox" th:value="${bean?.email }" validType="email"/>
+			</div>
+			<table >  
+             <tr th:each="m,iterStat : ${bean?.roles}">  
+               <td >
+               <input th:value="${m?.id}" type="hidden" id="roleid"/> 
+               </td>  
+            </tr>  
+           </table>  
+			<div class="fitem">
+				<label>角色:</label> <select class="easyui-combobox" id="roless" editable="false" name="roles" style="width: 170px; height: 30px"
+					data-options="
+                    url:'/hgerp/api/role/all',
+                    method:'get',
+                    valueField:'id',
+                    textField:'name',
+                    panelHeight:'200'
+                    "></select>
+			</div>
+</form>
+<script type="text/javascript">
+			 setTimeout(function(){
+				 var v = [];
+				 $("[id=roleid]").each(function (){
+					 v.push($(this).val());
+				 })
+				 $('#roless').combobox('setValues', v);
+			 }, 500);
+			 
+			</script>
+</body>
+</html>

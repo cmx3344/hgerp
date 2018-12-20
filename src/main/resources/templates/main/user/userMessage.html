@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 100%;">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body style="height: 100%;">
+<div th:include="/common/common_head::onloadJs" ></div>
+<div style="height: 100%;width: 60%;float: left;" id="left-div">
+       <table class="easyui-datagrid" style="width:100%;height:300px;" layoutH="0" id="myList" idField="id"
+			singleSelect = "true" url="/hgerp/api/user/getUserMessage"
+			data-options="method:'post',fit:true,rownumbers:true,toolbar:'#tb'">
+		<thead>
+			<tr>
+				<th data-options="field:'subject',align:'center',width:200" >标题</th>
+				<th data-options="field:'messageTime',align:'center',width:120" >创建时间</th>
+				<th data-options="field:'operator',align:'center',width:80" >创建人</th>
+				<th data-options="field:'state',align:'center',width:50,formatter:formatterstates" >状态</th>
+				<th data-options="field:'type',align:'center',width:60,formatter:formattertype" >类型</th>
+				<th data-options="field:'ty',align:'center',width:80,formatter:formatterread" >操作</th>
+			</tr>
+		</thead>
+	  </table>
+	  <div id="tb" style="height:auto,padding:5px;">
+	   <input type="hidden" id="type" th:value="${type}" />
+		<div style="margin:5px">
+			<input class="easyui-textbox" data-options="prompt:'标题'" style="width:150px;height:32px" id="subject" /> 
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+		</div>
+	</div>
+</div>
+<div style="height: 100%;width: 40%;float: left;">
+<div style="height: 25px;background: #eee;text-align: center;line-height: 25px;font-size: 16px;font-weight: 600;">消息内容</div>
+<textarea id="messages" style="width: 98%;height: 60%;font-size: 16px;text-indent: 2em;border: 0px;" readonly="readonly"></textarea>
+<div id="loadDiv">
+</div>
+</div>
+<script type="text/javascript">
+  /*<![CDATA[*/
+        function formatterstates(value,row){
+	       if(row.type==1){
+	          if(value==1){
+	             return '<span style="color:red;font-weight:600">未读</span>';
+	          }else{
+	             return '<span style="color:green;font-weight:600">已读</span>';
+	          }
+	       }else{
+	          return '';
+	       }
+	    }
+	    function formatterread(value,row,index){
+	       if(row.type==1){
+	           if(row.state==1){
+	              return '<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-ok" onclick="readMessages('+index+')">阅读</a>'+
+	                     '  <a href="javascript:;" style="color:red;" onclick="markedRead('+index+')">标为已读</a>';
+	           }else{
+	              return '<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-ok" onclick="readMessages('+index+')">阅读</a>';
+	           }
+	       }else{
+	          return '<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-ok" onclick="readMessages('+index+')">阅读</a>';
+	       }
+	    }
+	    
+	    function formattertype(value,row,index){
+	       if(value==1){
+	           return '<span style="color:red;font-weight:600">我接受的</span>';
+	       }
+	       if(value==2){
+	           return '<span style="color:green;font-weight:600">我发送的</span>';
+	       }
+	    }
+	    
+	     function doSearch(value, name) {
+			$('#myList').datagrid('load', {
+				subject : $("#subject").val()
+			});
+		}
+	    
+  	   function readMessages(index){
+  	      var rows = $("#myList").datagrid('getRows');
+  	      var row = rows[index];
+  	      $("#messages").text(row.message);
+  	      $("#loadDiv").load("/hgerp/api/user/getFiles?id="+row.id);
+		}
+		
+		function markedRead(index){
+  	      var rows = $("#myList").datagrid('getRows');
+  	      var row = rows[index];
+  	      if(row.state==1&&row.type==1){
+  	          $("#myMessage").find("tr").eq(index).remove();
+  	          $.ajax({
+  	           url:'/hgerp/api/user/updateUserMessageState',
+  	           data:{id:row.id},
+  	           type:'POST',
+  	           success:function (res){
+  	             if(res=='success'){
+  	               $("#myList").datagrid('reload');
+  	             }
+  	           }
+  	         })
+  	      }
+		}
+		/*]]>*/
+</script>
+</body>
+</html>

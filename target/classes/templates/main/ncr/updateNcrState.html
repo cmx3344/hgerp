@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${id}" name="id"/>
+			<select class="easyui-combobox" required="true" style="width:150px;" name="state">
+				   <option value="7">返工</option>
+				   <option value="8">报废</option>
+				   <option value="21">返修</option>
+				   <option value="22">退货</option>
+			</select>
+</form>
+</body>
+</html>

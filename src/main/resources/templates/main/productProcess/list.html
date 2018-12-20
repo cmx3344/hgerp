@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/productProcess/getList" method="get" 
+			data-options="loadMsg: '正在加载，请稍候...',pagination:true,pageSize:500,pageList: [100,200,500,1000],toolbar:'#tb'"
+			rownumbers="true" fit="true" singleSelect="false" showRefresh="true">
+		<thead frozen="true">
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'forgingNum',width:200,editor:'text'">锻件编号</th>
+				<th data-options="field:'forgingSize',width:200,editor:'text'">锻件尺寸</th>
+				<th data-options="field:'optime',width:200,editor:'text'">操作日期</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="tb" style="height:auto,padding:5px;">
+		<div style="margin:5px">
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeProd()">删除</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="importExcel()">导入</a>
+			<input class="easyui-textbox" data-options="prompt:'锻件编号'" style="width:150px;height:32px" id="forgingNums" /> 
+			<input class="easyui-textbox" data-options="prompt:'锻件尺寸'" style="width:150px;height:32px" id="sizes" /> 
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+		</div>
+	</div>
+
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	  
+	  function doSearch(value, name) {
+			$('#dg').datagrid('reload', {
+				forgingNum : $("#forgingNums").val(),
+				sizes : $("#sizes").val()
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+		
+	  function importExcel(){
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '信息导入',
+            width:400,
+            height:400,
+            closed : false,
+            cache : false,
+            href : '/hgerp/productProcess/importexcel',
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '确定',
+                iconCls : 'icon-ok',
+                handler : function() {
+                     $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                      });
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/productProcess/doExcelImport',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             if(!isValid){
+		                               $.messager.progress('close');
+		                             }
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                 $.messager.progress('close');
+	                                 if(data == 'fileNotUpload'){
+	                                     $.messager.alert('提示信息','文件上传失败,请重新上传!','warning');
+	                                 }else if(data == 'sheetNotExists'){
+	                                     $.messager.alert('提示信息','sheet页不存在!','warning');
+	                                 }else if(data == 'success'){
+	                                     $("#newDialog").dialog('destroy');
+	                                     $.messager.show({
+	                                                    title : '消息提示',
+														msg : '上传成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+										$('#dg').datagrid('reload');
+	                                 }
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+	  
+	 function removeProd(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length==0){
+	       $.messager.alert('提示信息', '请至少选择一条数据!', 'warning');
+	       return false;
+	    }
+	    var ids = "";
+		for (var x = 0; x < rows.length; x++) {
+		  if (x == 0) {
+			  ids = rows[x].id;
+		  } else {
+			  ids = ids + "," + rows[x].id;
+		  }
+		 }
+		 $.messager.confirm('提示信息', '确定继续操作吗?', function(r){
+				if (r){
+					$.ajax({
+									type : "POST",
+									url : "/hgerp/productProcess/delete",
+									data : {
+										ids : ids
+									},
+									success : function(data) {
+									   if(data=='success'){
+									     $.messager.show({
+											title : '消息提示',
+											msg : '删除成功！',
+											timeout : 1000,
+											showType : 'slide',
+											style : {
+												right : '',
+												bottom : ''
+											}
+										});
+										$('#dg').datagrid('clearSelections');
+										$('#dg').datagrid('reload');
+									   }
+									}
+								})
+				}
+			});
+	  }
+		/*]]>*/
+</script>
+</body>
+</html>

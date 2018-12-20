@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${ids}" name="ids"/>
+			<input type="hidden" th:value="${type}" name="type"/>
+			<table class="gridtable" style="width: 100%" th:if="${type==1}">
+			   <tr><th>合料或出坯规格</th><th>供应商</th><th>锭节号</th><th>下料出坯日期</th><th>下料出坯备注</th><th>下料日期</th><th >下料备注</th><th style="width: 150px;">下料炉号</th></tr>
+			   <tr><td><input class="easyui-textbox" style="width: 80px;" name="hlSize"/></td>
+			   <td><input class="easyui-textbox" style="width: 80px;" name="supplier"/></td>
+			   <td><input class="easyui-textbox" style="width: 80px;" name="ignotNum" value="Φ"/></td>
+			   <td><input class="easyui-datebox" style="width: 80px;" name="blankDateA"/></td>
+			   <td><input class="easyui-textbox" style="width: 120px;" name="blankRemarkA"/></td>
+			   <td><input class="easyui-datebox" style="width: 80px;" name="blankDate"/></td>
+			   <td><input class="easyui-textbox" style="width: 120px;" name="blankRemark"/></td>
+			   <td><input class="easyui-textbox" style="width: 150px;" name="heatNum" th:value="${heatNum}"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			      <td><input type="checkbox" name="c" value="1"/></td>
+			      <td><input type="checkbox" name="d" value="1"/></td>
+			      <td><input type="checkbox" name="e" value="1"/></td>
+			      <td><input type="checkbox" name="f" value="1"/></td>
+			      <td><input type="checkbox" name="g" value="1"/></td>
+			      <td><input type="checkbox" name="h" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<table class="gridtable" style="width: 100%" th:if="${type==2}">
+			   <tr><th>锻造出坯设备</th><th>锻造出坯投入日期</th><!-- <th>锻造出坯转出日期</th> --><th>加工方</th><th>锻造转入</th></tr>
+			   <tr>
+			   <td th:if="${state!=10}">
+			   <select name="forgingWorkerA">
+			      <option value="2500T压机">2500T压机</option>
+			      <option value="5T锤">5T锤</option>
+			      <option value="8T锤">8T锤</option>
+			      <option value="小锤">小锤</option>
+			   </select>
+			   </td>
+			   <td th:if="${state==10}">
+			      <input class="easyui-textbox" style="width: 150px;" name="forgingWorkerA" />
+			   </td>
+			   <td><input class="easyui-datebox" name="forgingInDateA"/></td>
+			   <!-- <td><input class="easyui-datebox" name="forgingOutDateA"/></td> -->
+			   <td  th:if="${state!=10}">
+			   <select name="forgingWorker">
+			      <option value="2500T压机">2500T压机</option>
+			      <option value="5T锤">5T锤</option>
+			      <option value="8T锤">8T锤</option>
+			      <option value="小锤">小锤</option>
+			   </select></td>
+			   <td th:if="${state==10}">
+			      <input class="easyui-textbox" style="width: 150px;" name="forgingWorker" />
+			   </td>
+			   <td><input class="easyui-datebox" name="forgingInDate"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			      <td><input type="checkbox" name="d" value="1"/></td>
+			      <td><input type="checkbox" name="e" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 锻后热处理 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==3}">
+			   <tr><th>热处理出坯投入日期</th><th>加工方</th><th>锻后热处理转入日期</th><th>外协单位</th></tr>
+			   <tr>
+			   <td><input class="easyui-datebox" name="heatTreatInDateA"/></td>
+			   <td>
+			   <input class="easyui-textbox" name="afterForgingWorker"/>
+			   </td>
+			   <td><input class="easyui-datebox" name="afterForgingInDate"/></td>
+			   <td><input class="easyui-textbox" name="afterForgingOut"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="c" value="1"/></td>
+			      <td><input type="checkbox" name="d" value="1"/></td>
+			      <td><input type="checkbox" name="e" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 粗加工 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==4}">
+			   <tr><th>加工方</th><th>是否喷砂</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="roughMachingWorker"/></td>
+			   <td><select name="ispsa">
+			      <option value="是">是</option>
+			      <option value="否">否</option>
+			   </select></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="c" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 性能热处理 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==5}">
+			   <tr><th>加工方/外协单位</th><th>性能热处理转入日期</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="perHeatTreatWorker"/></td>
+			   <td><input class="easyui-datebox" name="perHeatTreatInDate"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 交货加工 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==6}">
+			   <tr><th>加工方</th><th>是否喷砂</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="deliveryWorker"/></td>
+			   <td><select name="ispsb">
+			      <option value="是">是</option>
+			      <option value="否">否</option>
+			   </select></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 后续热处理 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==7}">
+			   <tr><th>加工方</th><th>后续热处理转入日期</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="followupWorker"/></td>
+			   <td><input class="easyui-datebox" name="followupInDate"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 半精加工 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==8}">
+			   <tr><th>加工方</th><th>是否喷砂</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="halfFinishMachingWorker"/></td>
+			   <td><select name="ispsc">
+			      <option value="是">是</option>
+			      <option value="否">否</option>
+			   </select></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 精加工 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==9}">
+			   <tr><th>加工方</th><th>成品重量</th><th>是否喷砂</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="finishMachingWorker"/></td>
+			   <td><input class="easyui-numberbox" name="finishMachingWeight"/></td>
+			   <td><select name="ispsd">
+			      <option value="是">是</option>
+			      <option value="否">否</option>
+			   </select></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			      <td><input type="checkbox" name="c" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 取样 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==10}">
+			   <tr><th>取样 转入</th></tr>
+			   <tr>
+			   <td><input class="easyui-datebox" name="sampleInDate"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 锻造外协 -->
+	       <table class="gridtable" style="width: 100%" th:if="${type==11}">
+			   <tr><th>锻造转入日期</th><th>委外备注</th></tr>
+			   <tr>
+			   <td><input class="easyui-datebox" name="forgingInDate"/></td>
+			   <td><input class="easyui-textbox" name="forgingRemark"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			
+			<!-- 粗加工外协 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==12}">
+			   <tr><th>备注</th><th>外协单位</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="roughMachingOutRemark"/></td>
+			   <td><input class="easyui-textbox" name="roughMachingOutCom"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			<!-- 交货加工外协 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==13}">
+			   <tr><th>备注</th><th>外协单位</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="deliveryOutRemark"/></td>
+			   <td><input class="easyui-textbox" name="deliveryOutCom"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			<!-- 半精加工外协 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==14}">
+			   <tr><th>备注</th><th>外协单位</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="halfFinishOutRemark"/></td>
+			   <td><input class="easyui-textbox" name="halfFinishOutCom"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			<!-- 精加工外协 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==15}">
+			   <tr><th>备注</th><th>外协单位</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="finishMachingOutRemark"/></td>
+			   <td><input class="easyui-textbox" name="finishMachingOutCom"/></td>
+			   </tr>
+			   <tr>
+			      <td><input type="checkbox" name="a" value="1"/></td>
+			      <td><input type="checkbox" name="b" value="1"/></td>
+			   </tr>
+			</table>
+			<!-- 粗加工重量 -->
+			<table class="gridtable" style="width: 100%" th:if="${type==16}">
+			   <tr><th>重量</th></tr>
+			   <tr>
+			   <td><input class="easyui-textbox" name="roughMachingWeight"/></td>
+			   </tr>
+			</table>
+			<h1 style="color: red;">注:请选择要批量编辑的内容,并且勾选对应的选项,否则编辑不生效</h1>
+
+</form>
+</body>
+</html>

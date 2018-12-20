@@ -1,0 +1,14 @@
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe">
+<input  name="ids" th:value="${ids}" type="hidden"/>
+<input  name="type" th:value="${type}" type="hidden"/>
+			<div class="fitem">
+				<label>转出日期:</label>
+				<input name="outDate" class="easyui-datebox" required="true" th:value="${outDate}"/>
+			</div>
+		</form>
+</body>
+</html>

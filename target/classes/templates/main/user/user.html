@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="user-grid" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/api/user/all" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...'"
+			rownumbers="false" fit="true" singleSelect="true" showRefresh="true">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'username',width:100">账号</th>
+				<th data-options="field:'userChnName',width:100">用户名</th>
+				<th data-options="field:'depName',width:100">部门</th>
+				<th data-options="field:'email',width:150">用户邮箱</th>
+				<th data-options="field:'locked',width:100">用户是否被锁定</th>
+			</tr>
+		</thead>
+	</table>
+
+<script type="text/javascript">
+	  /*<![CDATA[*/
+$(function (){
+	$('#user-grid').datagrid(
+			{
+				toolbar : [
+						{
+							text : '增加用户',
+							iconCls : 'icon-add',
+							handler : function() {
+								editUser(1);
+							}
+						},
+						'-',
+						{
+							text : '编辑用户',
+							iconCls : 'icon-edit',
+							handler : function() {
+								editUser(2);
+							}
+						},
+						'-',
+						{
+							text : '禁用',
+							iconCls : 'icon-remove',
+							handler : function() {
+							 var selectRow = $('#user-grid').datagrid('getSelected');
+						     if(selectRow){
+						       $.messager.confirm('确认提示','确定要删除吗?',function(r){
+                                  if (r){
+                                     $.ajax({
+									  type : 'DELETE',
+									  url : '/hgerp/api/user/'
+											+ selectRow.id,
+									  success : function(result) {
+										if (result == "OK") {
+											$('#user-grid').datagrid('reload'); // reload
+										} 
+									  },
+									  error : function(XMLHttpRequest,textStatus, errorThrown) {
+										  $.messager.alert("Warning", "操作失败！", 'error');
+									  }
+								     });
+                                  }
+                               });
+						     }else{
+						    	 $.messager.alert("Warning", "请选择要禁用的行！", 'error');
+						     }
+							}
+						}
+				]
+			});
+})
+
+
+function editUser(type){
+    if(type == 1){
+		$('<div></div>').dialog({
+            id : 'newDialog',
+            title : '添加用户',
+            maximizable:true,
+            maximized:true,
+            closed : false,
+            cache : false,
+            href : '/hgerp/api/user/edit',
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '保存',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	$('#fm').form('validate');
+                    $.ajax({
+                        //几个参数需要注意一下
+                            type: "POST",
+                            async: false,
+                            url:  "/hgerp/api/user/save",
+                            data: $('#fm').serialize(),
+                            success: function (result) {
+                                if (result == 'success') {
+                                	$.messager.show({
+                        				title:'消息提示',
+                        				msg:'操作成功！',
+                        				timeout:1000,
+                        				showType:'slide',
+                        				style:{
+                        					right:'',
+                        					bottom:''
+                        				}
+                        			});
+                                	$("#newDialog").dialog('destroy');
+                                	$('#user-grid').datagrid('reload');
+                                	$('#user-grid').datagrid('clearSelections');
+                                }
+                                if(result == "fail"){
+                                    $.messager.alert('提示信息','账号已存在!','warning');
+                                }
+                            },
+                            error : function() {
+                                alert("异常！");
+                            }
+                        });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+    }else{
+    	var row = $("#user-grid").datagrid('getSelected');
+		if(row){
+			$('<div></div>').dialog({
+	            id : 'newDialog',
+	            title : '编辑用户',
+	            maximizable:true,
+	            maximized:true,
+	            closed : false,
+	            cache : false,
+	            href : '/hgerp/api/user/edit?id='+row.id,
+	            modal : true,
+	            onLoad : function() {
+	                //初始化表单数据
+	            },
+	            onClose : function() {
+	                $(this).dialog('destroy');
+	            },
+	            buttons : [{
+	                text : '保存',
+	                iconCls : 'icon-ok',
+	                handler : function() {
+	                    $.ajax({
+	                        //几个参数需要注意一下
+	                            type: "POST",
+	                            async: false,
+	                            url:  "/hgerp/api/user/save",
+	                            data: $('#fm').serialize(),
+	                            success: function (result) {
+	                                if (result == 'success') {
+	                                	$.messager.show({
+	                        				title:'消息提示',
+	                        				msg:'操作成功！',
+	                        				timeout:1000,
+	                        				showType:'slide',
+	                        				style:{
+	                        					right:'',
+	                        					bottom:''
+	                        				}
+	                        			});
+	                                	$("#newDialog").dialog('destroy');
+	                                	$('#user-grid').datagrid('reload');
+	                                	$('#user-grid').datagrid('clearSelections');
+	                                }
+	                            },
+	                            error : function() {
+	                                alert("异常！");
+	                            }
+	                        });
+	                }
+	            }, {
+	                text : '关闭',
+	                iconCls : 'icon-cancel',
+	                handler : function() {
+	                    $("#newDialog").dialog('destroy');
+	                }
+	            } ],
+
+	        });
+		}else{
+			$.messager.alert('提示信息','请选择至少一条数据!','warning');
+		}
+    }
+}
+		/*]]>*/
+</script>
+</body>
+</html>

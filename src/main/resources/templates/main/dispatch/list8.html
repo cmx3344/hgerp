@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" style="width:auto;height:100%;" 
+			url="/hgerp/product/getDispatchList?tempSonId=8" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',pagination:true,pageSize:500,pageList: [100,200,500,1000],toolbar:'#tb'"
+			rownumbers="true" fit="true" singleSelect="false" showRefresh="true">
+		<thead frozen="true">
+			<tr>
+				<th data-options="field:'ck',checkbox:true,styler:cellStyler2"></th>
+				<th data-options="field:'serial_num',width:120">锻件编号</th>
+				<th data-options="field:'order_num',width:60">序号</th>
+				<th data-options="field:'prev_process',width:100">上道工序</th>
+			    <th data-options="field:'sizea',width:30">-</th>
+				<th data-options="field:'sizeb',width:50">-</th>
+				<th data-options="field:'sizec',width:30">-</th>
+				<th data-options="field:'sized',width:50">-</th>
+				<th data-options="field:'sizee',width:30">-</th>
+				<th data-options="field:'sizef',width:50">-</th>
+				<th data-options="field:'sizeg',width:30">-</th>
+				<th data-options="field:'sizeh',width:50">-</th>
+				<th data-options="field:'material',width:80">材质</th>
+			</tr>
+		</thead>
+		<thead>
+			<tr><th data-options="field:'break_num',width:100,styler:breakCellStyler">破坏件号</th>
+			    <th data-options="field:'heat_num',width:80">炉号</th>
+			    <th data-options="field:'rough_maching_weight',width:80">粗车重量</th>
+			    <th data-options="field:'ispsa',width:80">是否喷砂</th>
+			    <th data-options="field:'remarksa',width:80">备注1</th>
+				<th data-options="field:'remarksb',width:80">备注2</th>
+				
+				<th data-options="field:'grade',width:50">等级</th>
+
+			    <th data-options="field:'po_qty',width:80">订单总数</th>
+				<th data-options="field:'blank_weight',width:70">下料重</th>
+				<th data-options="field:'qty',width:80">生产数量</th>
+				<th data-options="field:'description',width:100">说明</th>
+				<th data-options="field:'quality_require',width:100">质量要求</th>
+				<th data-options="field:'ndt_require',width:100">探伤要求</th>
+				<th data-options="field:'delivery_state',width:100">交货状态</th>
+				<th data-options="field:'ht_require',width:80">热处理要求</th>
+				<th data-options="field:'ht_requireb',width:100"></th>
+				<th data-options="field:'hdns_require',width:100">硬度要求</th>
+				<th data-options="field:'next_process',width:100">后续工序</th>
+				<th data-options="field:'other_require',width:100">其他要求</th>
+				<th data-options="field:'forging_equip',width:100">锻造工艺设备</th>
+				<th data-options="field:'material_num',width:100">物料号</th>
+				<th data-options="field:'dwg_num',width:100">图号</th>
+				<th data-options="field:'product_num',width:80">生产编号</th>
+				<th data-options="field:'code',width:40">代号</th>
+				<th data-options="field:'po_num',width:60">合同编号</th>
+				<th data-options="field:'po_date',width:70">合同交货期</th>
+				<th data-options="field:'po_update_date',width:70">更改交货期</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="tb" style="height:auto,padding:5px;">
+	   <input type="hidden" id="type" th:value="${type}" />
+		<div style="margin:5px">
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="nextProcess(3)">投入生产</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="outside()">外协</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-cancel" onclick="nextProcess(7)">暂停</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="split()">拆分</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-undo" onclick="nextProcess(12)">退回到上道</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-cancel" onclick="breakOut()">破坏（入库）</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="toUpdateOrderNum()">修改序号及数量</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-print" onclick="exportxn()">导出施工检验单</a>
+			<input class="easyui-textbox" data-options="prompt:'锻件编号'" style="width:150px;height:32px" id="serialNum" /> 
+			<input class="easyui-textbox" data-options="prompt:'交货期(格式:18-01)'" style="width:120px;height:32px" id="poDate"/>
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+		</div>
+	</div>
+
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	     function doSearch(value, name) {
+	        $('#dg').datagrid('clearSelections');
+			$('#dg').datagrid('load', {
+				serialNum : $("#serialNum").val(),
+				poDate:$("#poDate").val()
+			});
+		}
+		
+		
+	$(function (){
+		   $('#dg').datagrid({
+		     rowStyler:function(index,row){
+			   if (row.state == 13){
+				  return 'background-color:#FF6666;color:pink;';
+			   }
+		    }
+	      });
+		})
+	  function cellStyler2(value,row,index){
+			if (row.isback==1){
+				return 'background-color:blue;color:white;';
+			}
+		}
+		/*]]>*/
+</script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+    <body >
+    <script type="text/javascript">
+window.onload = function(){ 
+	　　         $("#loadingDiv").fadeOut(0,function () {  
+             $(this).remove();  
+          }); 
+        } 
+        
+</script>
+    <div th:include="/common/common_head::onloadJs"></div>
+	<div class="easyui-layout" fit="true" >  
+        <!-- 正上方panel -->  
+    <div region="north" style="height:40px;font-size: 20px;overflow: hidden;" >
+        <div class="easyui-panel" style="padding-top:5px;height: 100%;background-color: #ddd;">
+		  <span style="font-size: 25px;font-family: KaiTi;">&nbsp;&nbsp;海锅生产管理系统&nbsp;&nbsp;</span>
+		  <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-message" onclick="moreMessage()" style="color: red;">我的消息</a>
+		  <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="toMessage()" style="color: red;">发送站内信</a>
+		  <a href="javascript:void(0)" class="easyui-menubutton" style="float: right;margin-right: 10px;" data-options="menu:'#mm1',iconCls:'icon-set'">系统设置</a>
+		  <a href="javascript:void(0)" class="easyui-linkbutton" style="float: right;margin-right: 10px;" data-options="iconCls:'icon-man'" th:text="${'欢迎您:'+message}"></a>
+	      <a href="javascript:void(0)" class="easyui-linkbutton" onclick="initOrder()" data-options="iconCls:'icon-reload'" th:if="${username=='admin'||username=='chenh'||username=='wangy'}">初始化排序</a> 
+	      <table style="float: right">
+	         <tr>
+	         <td><div style="background: yellow;width: 20px;height: 20px;float: right;"></div></td><td>管理员返回</td>
+	         <td><div style="background: blue;width: 20px;height: 20px;float: right;"></div></td><td>后道退回</td>
+	         <td><div style="background: pink;width: 20px;height: 20px;float: right;"></div></td><td>出坯件</td>
+	         <td><div style="background: green;width: 20px;height: 20px;float: right;"></div></td><td>不合格申请</td>
+	         </tr>
+	      </table>
+	      <input readonly="readonly" style="width:70px;height:32px;background-color: #eee;" id="totalWeight"/> 
+	    </div>
+	   <div id="mm1" style="width:150px;">
+		<div data-options="iconCls:'icon-edit'" onclick="$('#dlg').dialog('open')">修改密码</div>
+		<div data-options="iconCls:'icon-logout'" onclick="logout()">退出系统</div>
+	   </div>
+    </div>  
+        
+		<!-- 左侧菜单 -->
+        <div data-options="region:'west'" title="&nbsp;&nbsp;&nbsp;&nbsp;导航菜单" style="width: 180px;">
+		<ul id="mainMenu" class="easyui-tree"></ul>
+		</div>
+		
+    <div id="mainPanle" region="center" title="" style="overflow:hidden;">
+        <div id="mainTabs" class="easyui-tabs"  fit="true" border="false" >
+           <div title="我的桌面" style="overflow:hidden;" id="home">
+               <div class="easyui-layout" data-options="fit:true">
+			<!-- <div data-options="region:'west'" style="width:30%;">
+				 <div class="easyui-panel"  iconCls="icon-message" style="width:auto;height:7%;">
+				   <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-more" onclick="moreMessage()" style="color: red;">查看所有</a>
+				   <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="toMessage()" style="color: red;">发送站内信</a>
+				 </div>
+				<div class="easyui-panel" title="我的消息" iconCls="icon-message" style="width:auto;height:93%;">
+				   <table class="gridtable" id="myMessage" style="width: 100%;">
+				       <tr th:each="message: ${list}" style="height: 25px;">
+				       <td th:text="${message.subject}"></td>  
+				       <td th:text="${message.messageTime}"></td>  
+				       <td th:text="${message.operator}"></td>
+				       <td><a href="javascript:;" style="color: red;font-weight: 600;" th:id="${message.id}" onclick="readMessage(this)">阅读</a>    
+				       </td>  
+				       </tr>
+				   </table>
+				 </div>
+			</div> -->
+			<div data-options="region:'west'" style="width:100%;height: 100%;">
+			   <div id="container" style="width:100%; height: 100%; "></div>
+			</div>
+			<!-- <div data-options="region:'center'" style="width:50%;height: 100%;">
+				<div id="p" class="easyui-panel" title="分析" style="width:100%;height:100%;border: 0px;">
+				<div class="easyui-calendar" style="width:100%;height:100%;"></div>
+				<div id="container" style="width: 95%; height: 400px; "></div>
+				</div>
+				<div id="container2" style="width: 100%; height: 100%; "></div>
+			</div> -->
+			<!-- <div data-options="region:'south'" style="width:100%;height: 50%;">
+			    <div id="container3" style="width: 100%; height: 100%; "></div>
+			</div> -->
+		</div>
+	           <div id="p" class="easyui-panel" title="Load Panel Content" style="width:49%;height:200px;padding:10px;float: left;"
+			         data-options="
+				        tools:[{
+					    iconCls:'icon-reload',
+					    handler:function(){
+						    $('#p').panel('refresh', '_content.html');
+					    }
+				       }]">
+	           </div>
+           </div>
+        </div>
+    </div>
+    
+        <!-- 正下方panel -->  
+        <div region="south" style="height:50px;background: #F4F9F6;font-weight: bold;font-size: 13px;line-height: 48px;" align="center">  
+                           开发人员:陈工18550992565 (微信同号)
+        </div>   
+        </div>
+<script type="text/javascript">
+ /*<![CDATA[*/
+	$(function() {
+		$('#mainMenu').tree({
+			url : '/hgerp/api/permission/getPermissionTree',
+			parentField : 'parentId',
+			animate:true,
+			lines:true,
+			onClick : function(node) {
+				var tabs = $('#mainTabs');
+				if (node.url) {
+					var src = node.url;
+					if ($('#mainTabs').tabs('exists', node.name)){
+						$('#mainTabs').tabs('select', node.name);
+					} else {
+						var content = '<iframe scrolling="auto" frameborder="0"  src="'+src+'" style="width:100%;height:99%;" ></iframe>';
+						$('#mainTabs').tabs('add',{
+							title:node.name,
+							iconCls : node.iconCls,
+							content:content,
+							fit : true,
+							closable:true
+						});
+					}
+				}
+			}
+		});
+		
+/**
+ * @author 
+ */
+$.extend($.fn.validatebox.defaults.rules, {  
+    /*必须和某个字段相等*/
+    equalTo: {
+        validator:function(value,param){
+            return $(param[0]).val() == value;
+        },
+        message:'字段不匹配'
+    }
+           
+});
+
+	})
+	
+	
+	function logout(){
+	    $.messager.confirm('确认提示', '确定要退出吗?', function(r){
+	      if (r){
+	         window.location.href = "/hgerp/logout";
+	      }
+        });
+    }
+    
+    function save(){
+       $('#ff').form('submit', {
+	     url: '/hgerp/updatePassword',
+	     onSubmit: function(){
+		   var isValid = $(this).form('validate');
+		   return isValid;	// return false will stop the form submission
+	    },
+	    success: function(data){
+	       if(data=='success'){
+	          $('#dlg').dialog('close')
+	          $.messager.alert('提示','密码修改成功,请重新登录!','info');
+              setTimeout(function(){
+                window.location.href = "/hgerp/logout";
+              },2000)
+	       }
+	       if(data=='e1'){
+	           $.messager.alert('错误提示','新密码和旧密码不能保持一致!','error');
+	       }
+	       if(data=='fail'){
+	           $.messager.alert('错误提示','原密码不正确!','error');
+	       }
+	    }
+      });
+    }
+    
+    //日历
+    $('#ca').calendar({
+        width: 320,
+        height: 320,
+        data: [
+			{
+			  date: '2015/12/24',
+			  value: 'Christmas Eve'
+			},
+			{
+			  date: '2015/12/25',
+			  value: 'Merry Christmas'
+			},
+			{
+			  date: '2016/01/01',
+			  value: 'Happy New Year'
+			}
+		],
+        onSelected: function (view, date, data) {
+            console.log('view:' + view)
+            alert('date:' + date)
+            console.log('data:' + (data || 'None'));
+        }
+    });
+    
+    
+   function moreMessage(){
+          var tabs = $('#mainTabs');
+					var src = '/hgerp/api/user/showMessage';
+					if ($('#mainTabs').tabs('exists', '我的消息')){
+						$('#mainTabs').tabs('select', '我的消息');
+					} else {
+						var content = '<iframe scrolling="auto" frameborder="0"  src="'+src+'" style="width:100%;height:99%;" ></iframe>';
+						$('#mainTabs').tabs('add',{
+							title:'我的消息',
+							iconCls : 'icon-message',
+							content:content,
+							fit : true,
+							closable:true
+						});
+					}
+	  }
+	  
+	 function toMessage(){
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '发送站内信',
+            width:800,
+            height:450,
+            maximizable:true,
+            resizable:true,
+            closed : false,
+            cache : false,
+            href : '/hgerp/api/user/toMessage',
+            modal : false,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '确定',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/api/user/doMessage',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                 if(data == 'success'){
+	                                     $("#newDialog").dialog('destroy');
+	                                     $.messager.show({
+	                                                    title : '消息提示',
+														msg : '发送成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+	                                 }
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+	  
+	   function readMessage(v){
+	     var id = $(v).attr("id");
+	     $(v).parents("tr").remove();
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '详情',
+            width:500,
+            height:300,
+            closed : false,
+            cache : false,
+            href : '/hgerp/api/user/readMessage?id='+id,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+	  function timeout(){
+	     $.ajax({
+	         url:'/hgerp/api/user/getUserMessageTotal',
+	         success:function(res){
+	             if(res>0){
+	               $.messager.confirm('提示', '您有'+res+'条新的信息,请问是否查看!', function(r){
+				     if (r){
+					    moreMessage();
+				     }
+			       });
+	             }
+	         }
+	      })
+	     setInterval(function(){
+	      $.ajax({
+	         url:'/hgerp/api/user/getUserMessageTotal',
+	         success:function(res){
+	             if(res>0){
+	                $.messager.confirm('提示', '您有'+res+'条新的信息,请问是否查看!', function(r){
+				       if (r){
+					      moreMessage();
+				       }
+			        });
+	             }
+	         }
+	      })
+	  },1000*60*3);
+	  }
+	  $(function(){
+	     timeout();
+	  })
+	  
+	   $(function(){
+           setInterval(function(){
+               $.ajax({
+                  url:"/hgerp/judgeLogin",
+                  type:"POST",
+                  success:function(data){
+                     if(data!='2'){
+                          $.messager.confirm('提示信息', '登录失效,需要重新登录吗?', function(r){
+				               if (r){
+				                    window.location.href="/hgerp/login"
+				               }
+				          })
+                     }
+                  },
+                  error:function(){
+                          $.messager.show({
+									title : '信息提示',
+									msg : '登录已失效！',
+									timeout : 5000,
+									showType : 'slide',
+									style : {
+										right : '',
+										bottom : ''
+									}
+						  });
+                  }
+               })
+           },1000*30)
+        })
+        
+        function initOrder(){
+           $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                    });
+           $.ajax({
+                  url:"/hgerp/product/codeInit",
+                  type:"POST",
+                  success:function(data){
+                     $.messager.progress('close');
+                     $.messager.show({
+									title : '信息提示',
+									msg : '操作成功！',
+									timeout : 1000,
+									showType : 'slide',
+									style : {
+										right : '',
+										bottom : ''
+									}
+						  });
+                  }
+               })
+        }
+     
+    /*]]>*/
+</script>
+<div id='loadingDiv' style="position: absolute; z-index: 1000; top: 0px; left: 0px;  
+   width: 100%; height: 100%; background: white; text-align: center;">  
+    <h1 style="top: 48%; position: relative;">  
+        <font color="#15428B">努力加载中···</font>  
+    </h1>  
+</div>
+        <div id="dlg" class="easyui-dialog" title="密码重置" data-options="iconCls:'icon-save',closed:true,buttons:'#bb'" style="width:380px;height:180px;padding:10px">
+        <form id="ff">
+	    <table style="width: 100%;">
+	    <tr><td>原密码</td><td><input  name="oldPassword" validType="length[4,32]" class="easyui-validatebox" required="true" type="password" value=""/></td></tr>
+	    <tr><td>新密码</td><td><input id="password" name="newPassword" validType="length[4,32]" class="easyui-validatebox" required="true" type="password" value=""/></td></tr>
+	    <tr><td>确认密码</td><td><input type="password" name="repassword" id="repassword" required="true" class="easyui-validatebox"  validType="equalTo['#password']" invalidMessage="两次输入密码不匹配"/></td></tr>
+	    </table>
+	    
+	    </form>	
+	    </div>
+	    <div id="bb">
+	      <a href="javascript:;" onclick="save()" class="easyui-linkbutton">Save</a>
+	      <a href="javascript:;" onclick="$('#dlg').dialog('close')" class="easyui-linkbutton">Close</a>
+        </div>
+
+    </body>
+</html>

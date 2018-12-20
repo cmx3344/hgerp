@@ -1,0 +1,42 @@
+    <table class="gridtable" style="background:#fafafa;margin: 10px;">
+        <tr style="height: 30px;">
+            <th style="width: auto;">锻件编号</th>
+            <th style="width: 60px;">序号</th>
+            <th style="width: auto;" colspan="8">规格</th>
+            <th style="width: 60px;">数量</th>
+            <th style="width: 80px;">单重</th>
+            <th style="width: 70px;">总重</th>
+            <th style="width: 100px;">材质</th>
+            <th style="width: 100px;">炉号</th>
+            <th style="width: 120px;">处理方式</th>
+            <th style="width: auto;">操作</th>
+        </tr>
+        <tr th:each="son: ${list}" style="height: 30px;">
+            <td th:text="${son?.serialNum}"></td>
+            <td th:text="${son?.orderNum}"></td>
+            <td th:text="${son?.sizeA}" style="min-width: 20px;"></td>
+            <td th:text="${son?.sizeB}" style="min-width: 20px;"></td>
+            <td th:text="${son?.sizeC}" style="min-width: 20px;"></td>
+            <td th:text="${son?.sizeD}" style="min-width: 20px;"></td>
+            <td th:text="${son?.sizeE}" style="min-width: 20px;"></td>
+            <td th:text="${son?.sizeF}" style="min-width: 20px;"></td>
+            <td th:text="${son?.sizeG}" style="min-width: 20px;"></td>
+            <td th:text="${son?.sizeH}" style="min-width: 20px;"></td>
+            <td th:text="${son?.qty}"></td>
+            <td th:text="${son?.blankWeight}"></td>
+            <td th:text="${son?.totalWeight}"></td>
+            <td th:text="${son?.material}"></td>
+            <td th:text="${son?.heatNum}"></td>
+            <td th:if="${son?.handleType==1}">返工</td>
+            <td th:if="${son?.handleType==2}">报废</td>
+            <td th:if="${son?.handleType==3}">让步</td>
+            <td th:if="${son?.handleType==4}">申请</td>
+            <td th:if="${son?.handleType==5}">返修</td>
+            <td th:if="${son?.handleType==6}">退货</td>
+            <td th:if="${son?.handleType==null}"></td>
+            <td>
+            <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" th:attr="onclick=${'ncrSpilt('+son?.productId+','+ncr.id+')'}" th:if="${ncr.state==1}">拆分</a>
+            <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-cancel" th:attr="onclick=${'handleNcr('+son?.productId+','+son.id+')'}" th:if="${(son.state==1)}">处置</a>
+            </td>
+        </tr>
+    </table>

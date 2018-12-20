@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 98%;">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body style="height: 98%;">
+<div th:include="/common/common_head::onloadJs" ></div>
+<style type="text/css">
+   .gridtable td{
+      font-size: 20px;
+      font-weight: bold;
+   }
+</style>
+
+    <input id="dateinput" class="easyui-textbox" th:value="${now}"/>
+    <select id="type"  class="easyui-combobox" style="width:150px;" data-options="onSelect:checkDate">
+			     <option value="1">下料</option>
+			     <option value="2">锻后热处理</option>
+			     <option value="3">粗车</option>
+			     <option value="4">性能热处理</option>
+			     <option value="5">交货加工</option>
+	</select>
+    <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-reload" onclick="reload()">检索</a>
+    <div id="xxx">
+    
+    </div>
+</body>
+<script type="text/javascript">
+ /*<![CDATA[*/
+ 
+ 
+           $(function(){
+             $.ajax({
+              url:'/hgerp/product/getProductDatae',
+              success:function(data){
+                $("#xxx").html(data);
+              }
+           })
+           
+          })
+          
+          function checkDate(record){
+             $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                        });
+            var dateinput = $("#dateinput").val();
+            var type = record.value;
+             $.ajax({
+              url:'/hgerp/product/getProductDatae',
+              data:{dateinput:dateinput,type:type},
+              success:function(data){
+                  $.messager.progress('close');
+                  $("#xxx").html(data);
+              }
+           })
+          }
+          
+          function reload(){
+            $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                        });
+            var dateinput = $("#dateinput").val();
+            var type = $("#type").val()
+             $.ajax({
+              url:'/hgerp/product/getProductDatae',
+              data:{dateinput:dateinput,type:type},
+              success:function(data){
+                  $.messager.progress('close');
+                  $("#xxx").html(data);
+              }
+           })
+          }
+          
+
+      /*]]>*/
+</script>
+</html>

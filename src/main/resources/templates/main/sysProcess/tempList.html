@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/process/getTempList" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...'"
+			rownumbers="false" fit="true" singleSelect="true" showRefresh="true">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'tempName',width:300">模板名称</th>
+				<th data-options="field:'state',width:100">使用状态</th>
+				<th data-options="field:'remarks',width:200">备注</th>
+			</tr>
+		</thead>
+	</table>
+
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	  
+$(function (){
+	$('#dg').datagrid(
+			{
+				toolbar : [
+						{
+							text : '新增',
+							iconCls : 'icon-add',
+							handler : function() {
+								edit(2);
+							}
+						},
+						'-',
+						{
+							text : '修改',
+							iconCls : 'icon-edit',
+							handler : function() {
+								edit(1);
+							}
+						}
+				]
+			});
+})
+
+
+function edit(type){
+        var url="";
+        var title="";
+        if(type==1){
+          title = "修改";
+          var row = $('#dg').datagrid('getSelected');
+          if(!row){
+            $.messager.alert('提示信息','请选择至少一条数据!','warning');
+            return false;
+          }else{
+            url = "/hgerp/process/editTemp?id="+row.id;
+          }
+        }else{
+           title = "新增";
+           url = "/hgerp/process/editTemp";
+        }
+        
+    
+		$('<div></div>').dialog({
+            id : 'newDialog',
+            title : title,
+            maximized:true,
+            closed : false,
+            cache : false,
+            href : url,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '保存',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	var isValid = $("#fm").form('validate');
+					if (isValid) {
+						var rows2 = $('#myList').datagrid('getRows');
+						var xx = {};
+						if (endEditing()) {
+							$('#myList').datagrid('acceptChanges');
+						}
+						for (var i = 0; i < rows2.length; i++) {
+							for ( var key in rows2[i]) {
+								xx["listSon[" + i + "]."+ key] = rows2[i][key];
+							}
+						}
+						var formData = $("#fm").serializeArray();
+						for ( var n in formData) {
+							var data = formData[n];
+							xx[data.name] = data.value;
+						}
+						console.log(xx);
+						$.ajax({    url : '/hgerp/process/saveTemp',
+									data : xx,
+									success : function(res) {
+											if (res == 'success') {
+												$("#newDialog").dialog('destroy');
+												$.messager.show({
+													title : '消息提示',
+													msg : '操作成功！',
+													timeout : 1000,
+													showType : 'slide',
+													style : {
+														right : '',
+														bottom : ''
+													}
+												});
+												$('#dg').datagrid('reload');
+											}
+									}
+								})
+							} else {
+                                $.messager.alert('提示信息', '请将数据填写完整!', 'warning');
+							}
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+     }
+		/*]]>*/
+</script>
+</body>
+</html>

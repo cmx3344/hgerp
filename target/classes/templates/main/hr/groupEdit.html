@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${bean?.id}" name="id"/>
+			<div class="fitem">
+			<label>班组名称:</label> <input name="groupName" class="easyui-textbox" th:value="${bean?.groupName}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>单价:</label> <input name="unitPrice" class="easyui-numberbox" data-options="precision:2" th:value="${bean?.unitPrice}" required="true"/>
+			</div>
+</form>
+</body>
+</html>

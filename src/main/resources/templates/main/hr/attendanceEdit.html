@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${bean?.id}" name="id"/>
+			<div class="fitem">
+			<label>姓名:</label> 
+			<input class="easyui-combobox" required="true"
+			name="emplId" th:value="${bean?.emplId}"
+			data-options="
+					url:'/hgerp/hr/getEmployeeList',
+					method:'get',
+					valueField:'id',
+					textField:'name',
+					panelHeight:'auto'
+			"/>
+			</div>
+			<div class="fitem">
+			<label>实际出勤天数:</label> <input name="attendanceDay" class="easyui-numberbox" data-options="precision:2" th:value="${bean?.attendanceDay}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>重量:</label> <input name="weight" class="easyui-numberbox" data-options="precision:2" th:value="${bean?.weight}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>加班时间:</label> <input name="lengthenHour" class="easyui-numberbox" data-options="precision:2" th:value="${bean?.lengthenHour}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>工时:</label> <input name="otherHour" class="easyui-numberbox" data-options="precision:2" th:value="${bean?.otherHour}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>刀量具:</label> <input name="tool" class="easyui-numberbox" data-options="precision:2" th:value="${bean?.tool}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>质量奖金:</label> <input name="qualityPrize" class="easyui-numberbox" data-options="precision:2" th:value="${bean?.qualityPrize}" required="true"/>
+			</div>
+</form>
+</body>
+</html>

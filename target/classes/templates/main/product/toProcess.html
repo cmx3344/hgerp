@@ -1,0 +1,35 @@
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe">
+			<div class="fitem">
+				<label>选择工序:</label>
+				<input type="hidden" name="ids" th:value="${ids}"/>
+				<select class="easyui-combobox" required="true" name="processId">
+				   <option value="4">下料</option>
+				   <option value="5">锻造</option>
+				   <option value="6">锻后热处理</option>
+				   <option value="7">粗加工</option>
+				   <option value="8">性能热处理</option>
+				   <option value="13">取样</option>
+				   <option value="9">交货加工</option>
+				   <option value="10">后续热处理</option>
+				   <option value="11">半精加工</option>
+				   <option value="12">精加工</option>
+				   <!-- <option th:each="son: ${list}" th:value="${son.id}" th:text="${son.procName}" ></option> -->
+				</select>
+			</div>
+			<div class="fitem">
+				<label>选择状态:</label>
+				<select class="easyui-combobox" required="true" name="state">
+				   <option value="3">正常工序</option>
+				   <option value="10">外协</option>
+				   <option value="11">调度</option>
+				   <option value="4">检验</option>
+				   <option value="6">待入库</option>
+				</select>
+			</div>
+		</form>
+</body>
+</html>

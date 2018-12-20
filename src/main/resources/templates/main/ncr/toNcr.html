@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${ids}" name="ids"/>
+			
+			<table style="width: auto">
+			  <tr>
+			    <td>报告人:</td><td><input class="easyui-textbox" name="reportPerson" required="true" style="width:150px;" /></td>
+			    <td>日期:</td><td><input class="easyui-datebox" name="reportDate" required="true"  th:value="${opTime}" style="width:150px;" /></td>
+			  </tr>
+			  <tr>
+			    <td>报告编号:</td><td><input class="easyui-textbox" name="ncrNum" style="width:150px;" /></td>
+			     <td>状态:</td>
+			    <td>
+			      <select name="fromProcess" class="easyui-combobox" required="true" style="width:150px;" >
+			       <option value="原料">原料</option>
+			       <option value="毛坯">毛坯</option>
+			       <option value="粗加工">粗加工</option>
+			       <option value="精加工">精加工</option>
+			       <option value="热处理">热处理</option>
+			       <option value="客退">客退</option>
+			       <option value="其他">其他</option>
+			      </select>
+			    </td>
+			  </tr>
+			  <tr>
+			    <!-- <td>责任部门:</td><td><input class="easyui-textbox" name="responsibleDep" required="true" style="width:150px;" /></td> -->
+			    <td>设备:</td>
+			    <td>
+			      <input class="easyui-textbox" name="equipment" required="true" th:value="${forgingWorker}" style="width:150px;" />
+			      <!-- <select name="equipment" class="easyui-combobox" required="true" style="width:150px;" >
+			       <option value="压机">压机</option>
+			       <option value="环机">环机</option>
+			       <option value="5T">5T</option>
+			       <option value="8T">8T</option>
+			       <option value="2T/1T">2T/1T</option>
+			      </select> -->
+			    </td>
+			    <td>不合格类型:</td><td><input class="easyui-textbox" name="ncrType" required="true" style="width:150px;" /></td>
+			  </tr>
+			  <tr>
+			   <td>单位类型:</td><td>
+			   <select name="unitType" class="easyui-combobox" required="true" style="width:150px;" >
+			       <option value="供应商">供应商</option>
+			       <option value="工序">工序</option>
+			       <option value="客户">客户</option>
+			      </select>
+			   </td>
+			   <td>单位:</td><td><input class="easyui-textbox" name="units" required="true" style="width:150px;" /></td>
+			  </tr>
+			  <tr>
+			    <td>不合格原因:</td><td colspan="3"><input class="easyui-textbox" name="reason" required="true" data-options="multiline:true" style="width:100%;height:100px" /></td>
+			  </tr>
+			</table>
+			
+	        <input id="file_upload" name="myfiles" type="file" multiple="true" />
+</form>
+
+   <script type="text/javascript">
+	  /*<![CDATA[*/
+$(function() {
+    $("#file_upload").uploadify({
+        height        : 30,
+        swf           : '/hgerp/uploadify/uploadify.swf',
+        uploader      : '/hgerp/fileManage/uploadb',
+        'formData'      : {'location' : 'ncr'},
+        width         : 120,
+        buttonText: '上传图片',
+        fileTypeExts: '*.jpg;*.png;*.jpeg;*.gif;*.pdf;*.PDF;',
+        fileObjName: 'myfiles',
+        fileSizeLimit:'100000',
+        multi: true,
+        simUploadLimit : 20,
+        removeCompleted : false,
+        auto: true,
+        onUploadSuccess: function (file, data, response) {
+            var len = $("#fm").find(".fileQues").length;
+        	$("#fm").append('<input type="hidden" name="files['+len+'].file" class="fileQues" id="'+file.id+'" value="'+data+'"/> ');
+        	
+            var cancel=$('#file_upload-queue .uploadify-queue-item[id="' + file.id + '"]').find(".cancel a");
+            if (cancel) {
+                cancel.attr("deletefileid",data);
+                cancel.click(function () {
+                   //我的处理逻辑
+                   //1.首先调用ajax 传递文件名到后台,后台删除对应的文件(这个我就不写了)
+                   //2.从后台返回的为true,表明删除成功;返回false,表明删除失败
+                     var deletefileid = cancel.attr("deletefileid");
+                     $("#uploadify").uploadify("cancel",deletefileid);//将上传队列中的文件删除.
+                     $("#fm").find("#"+file.id+"").remove();
+                     var z = 0;
+                     $("#fm").find(".fileQues").each(function(){
+                         if(file.id!=$(this).attr("id")){
+                            $(this).attr("name","files["+z+"].file")
+                            z++;
+                         }
+                     });  
+               });
+            }
+        },
+        onClearQueue : function(queueItemCount) {
+           alert(queueItemCount + ' file(s) were removed from the queue');
+           console.log(queueItemCount);
+           //$("#xxxxxx").find("#"+file.id+"").remove();
+        }
+    });
+});
+		/*]]>*/
+</script>
+</body>
+</html>

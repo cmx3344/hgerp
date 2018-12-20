@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/hr/getEmployeeList" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',toolbar:'#tb'"
+			rownumbers="false" fit="true" singleSelect="true" showRefresh="true">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'jobNumber',width:60">工号</th>
+				<th data-options="field:'userName',width:70">姓名</th>
+				<th data-options="field:'identificationNumber',width:150">身份证号码</th>
+				<th data-options="field:'birthday',width:80">出生年月</th>
+				<th data-options="field:'age',width:50">年龄</th>
+				<th data-options="field:'depName',width:80">部门</th>
+				<th data-options="field:'groupName',width:80">班组</th>
+				<th data-options="field:'station',width:80">岗位</th>
+				<th data-options="field:'inDate',width:80">进厂日期</th>
+				<th data-options="field:'ageOfWork',width:80">工龄</th>
+				<th data-options="field:'startTime',width:80">上班时间</th>
+				<th data-options="field:'endTime',width:80">下班时间</th>
+				<th data-options="field:'gender',width:50">性别</th>
+				<th data-options="field:'maritalStatus',width:60">是否已婚</th>
+				<th data-options="field:'nationality',width:50">民族</th>
+				<th data-options="field:'station',width:60">所属结构</th>
+				<th data-options="field:'contactNumber',width:100">联系电话</th>
+				<th data-options="field:'residence',width:150">户籍</th>
+				<th data-options="field:'currentAddress',width:150">现居住地</th>
+				<th data-options="field:'probationPeriod',width:80">试用期止</th>
+				<th data-options="field:'socialSecurityNumber',width:100">社保编号</th>
+				<th data-options="field:'providentFundAccount',width:100">公积金帐号</th>
+				<th data-options="field:'poStartDate',width:80">合同起</th>
+				<th data-options="field:'poEndDate',width:80">合同止</th>
+				<th data-options="field:'supplementalAgreement',width:100">补充协议</th>
+				<th data-options="field:'identityCardStart',width:80">身份证起</th>
+				<th data-options="field:'identityCardEnd',width:80">身份证止</th>
+				<th data-options="field:'education',width:80">学历</th>
+				<th data-options="field:'graduateFrom',width:100">毕业院校</th>
+				<th data-options="field:'major',width:100">专业</th>
+				<th data-options="field:'certificateNumber',width:100">证书编号</th>
+				<th data-options="field:'studyStart',width:80">学习时间(始)</th>
+				<th data-options="field:'studyEnd',width:80">毕业时间(末)</th>
+				<th data-options="field:'schoolModel',width:100">学习模式</th>
+				<th data-options="field:'studyForm',width:100">学习形式</th>
+				<th data-options="field:'credential',width:100">职称证书</th>
+				<th data-options="field:'travellingCrane',width:50">行车</th>
+				<th data-options="field:'forklift',width:50">叉车</th>
+				<th data-options="field:'electricSoldering',width:50">电焊</th>
+				<th data-options="field:'safetyOfficer',width:50">安全员</th>
+				<th data-options="field:'electricianCertificate',width:50">电工证</th>
+				<th data-options="field:'workLocation',width:100">工作地点</th>
+				<th data-options="field:'retireDate',width:80">退休日期</th>
+				<th data-options="field:'line',width:100">条线</th>
+				<th data-options="field:'remarks',width:120">备注</th>
+				
+			</tr>
+		</thead>
+	</table>
+	<div id="tb" style="height:auto,padding:5px;">
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-add" onclick="edit(2)">新增</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="edit(1)">修改</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeEmpl()">删除</a>
+		<input class="easyui-textbox" data-options="prompt:'姓名'" style="width:150px;height:32px" id="name" /> 
+		<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+	</div>		
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	     function doSearch(value, name) {
+			$('#dg').datagrid('load', {
+				name : $("#name").val()
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+
+function edit(type){
+        var url="";
+        var title = "";
+        if(type==1){
+          title = "修改";
+          var row = $('#dg').datagrid('getSelected');
+          if(!row){
+            $.messager.alert('提示信息','请选择至少一条数据!','warning');
+            return false;
+          }else{
+            url = "/hgerp/hr/employeeEdit?id="+row.id;
+          }
+        }else{
+           title = "新增";
+           url = "/hgerp/hr/employeeEdit";
+        }
+        
+    
+		$('<div></div>').dialog({
+            id : 'newDialog',
+            title : title,
+            maximized:true,
+            closed : false,
+            cache : false,
+            href : url,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '保存',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/hr/doEmployeeEdit',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                   $("#newDialog").dialog('destroy');
+	                                   $('#dg').datagrid('reload');
+	                                   $.messager.show({
+	                                                    title : '消息提示',
+														msg : '操作成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+     }
+     
+    function removeEmpl(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length!=1){
+	       $.messager.alert('提示信息', '请选择一条数据!', 'warning');
+	       return false;
+	    }
+		 $.messager.confirm('提示信息', '删除人员将同时删除考勤信息,确认该操作吗?', function(r){
+				if (r){
+					$.ajax({
+									type : "POST",
+									url : "/hgerp/hr/removeEmpl",
+									data : {
+										id : rows[0].id
+									},
+									success : function(data) {
+									   if(data=='success'){
+									     $.messager.show({
+											title : '消息提示',
+											msg : '操作成功！',
+											timeout : 1000,
+											showType : 'slide',
+											style : {
+												right : '',
+												bottom : ''
+											}
+										});
+										$('#dg').datagrid('clearSelections');
+										$('#dg').datagrid('reload');//
+									   }
+									}
+								})
+				}
+			});
+	  }
+		/*]]>*/
+</script>
+</body>
+</html>

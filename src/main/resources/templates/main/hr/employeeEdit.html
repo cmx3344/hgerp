@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${bean?.id}" name="id"/>
+			<input name="departureDate" type="hidden" th:value="${bean?.departureDate}"/>
+			<table>
+			   <tr>
+			     <td>工号:</td>
+			     <td><input name="jobNumber" class="easyui-textbox" th:value="${bean?.jobNumber}" required="true"/></td>
+			     <td>姓名:</td>
+			     <td><input name="userName" class="easyui-textbox" th:value="${bean?.userName}" required="true"/></td>
+			   </tr>
+			    <tr>
+			     <td>部门:</td>
+			     <td><input class="easyui-combobox" required="true"
+			name="depId" th:value="${bean?.depId}"
+			data-options="
+					url:'/hgerp/department/getList',
+					method:'get',
+					valueField:'id',
+					textField:'name',
+					panelHeight:'auto'
+			"/></td>
+			     <td>班组:</td>
+			     <td><input class="easyui-combobox" required="true"
+			name="groupId" th:value="${bean?.groupId}"
+			data-options="
+					url:'/hgerp/hr/getGroupList',
+					method:'get',
+					valueField:'id',
+					textField:'groupName',
+					panelHeight:'auto'
+			"/></td>
+			     <td>岗位:</td>
+			     <td><input name="station" class="easyui-textbox" th:value="${bean?.station}" required="true"/></td>
+			   </tr>
+			   <tr>
+			     <td>进厂日期:</td>
+			     <td><input name="inDate" class="easyui-datebox" th:value="${bean?.inDate}" required="true"/></td>
+			     <td>上班时间:</td>
+			     <td><input name="startTime" class="easyui-textbox" th:value="${bean?.startTime}" required="true"/></td>
+			     <td>下班时间:</td>
+			     <td><input name="endTime" class="easyui-textbox" th:value="${bean?.endTime}" required="true"/></td>
+			   </tr>
+			   <tr>
+			     <td>性别:</td>
+			     <td>
+			     <select name="gender" class="easyui-combobox" style="width: 100%;">
+			        <option value="男" th:selected="${bean?.gender eq '男'}">男</option>
+			        <option value="女" th:selected="${bean?.gender eq '女'}">女</option>
+			     </select>
+			     </td>
+			     
+			     <td>是否已婚:</td>
+			     <td>
+			     <select name="maritalStatus" class="easyui-combobox" style="width: 100%;">
+			        <option value="否" th:selected="${bean?.maritalStatus eq '否'}">否</option>
+			        <option value="是" th:selected="${bean?.maritalStatus eq '是'}">是</option>
+			     </select>
+			     </td>
+			   </tr>
+			   <tr>
+			     <td>民族:</td>
+			     <td><input name="nationality" class="easyui-textbox" th:value="${bean?.nationality}" required="true"/></td>
+			     <td>所属结构:</td>
+			     <td>
+			     <select name="structure" class="easyui-combobox" style="width: 100%;">
+			        <option value="生产" th:selected="${bean?.structure eq '生产'}">生产</option>
+			        <option value="销售" th:selected="${bean?.structure eq '销售'}">销售</option>
+			        <option value="管理" th:selected="${bean?.structure eq '管理'}">管理</option>
+			     </select>
+			     </td>
+			    <td>联系电话:</td>
+			     <td><input name="contactNumber" class="easyui-textbox" th:value="${bean?.contactNumber}" required="true"/></td>
+			   </tr>
+			   <tr>
+			     <td>户籍:</td>
+			     <td colspan="5"><input name="residence" style="width: 100%;" class="easyui-textbox" th:value="${bean?.residence}" required="true"/></td>
+			   </tr>
+			   <tr>
+			     <td>现居住地:</td>
+			     <td colspan="5"><input name="currentAddress" style="width: 100%;" class="easyui-textbox" th:value="${bean?.currentAddress}" required="true"/></td>
+			   </tr>
+			   
+			   <tr>
+			     <td>试用期止:</td>
+			     <td><input name="probationPeriod" class="easyui-datebox" th:value="${bean?.probationPeriod}" required="true"/></td>
+			     <td>社保编号:</td>
+			     <td><input name="socialSecurityNumber" class="easyui-textbox" th:value="${bean?.socialSecurityNumber}"/></td>
+			     <td>公积金帐号:</td>
+			     <td colspan="3"><input name="providentFundAccount" class="easyui-textbox" th:value="${bean?.providentFundAccount}"/></td>
+			   </tr>
+			   <tr>
+			     <td>合同起:</td>
+			     <td><input name="poStartDate" class="easyui-datebox" th:value="${bean?.poStartDate}" required="true"/></td>
+			     <td>合同止:</td>
+			     <td><input name="poEndDate" class="easyui-datebox" th:value="${bean?.poEndDate}" required="true"/></td>
+			     <td>补充协议:</td>
+			     <td><input name="supplementalAgreement" class="easyui-textbox" th:value="${bean?.supplementalAgreement}" /></td>
+			   </tr>
+			   <tr>
+			     <td>身份证号码:</td>
+			     <td><input name="identificationNumber" class="easyui-textbox" th:value="${bean?.identificationNumber}" required="true"/></td>
+			     <td>身份证起:</td>
+			     <td><input name="identityCardStart" class="easyui-datebox" th:value="${bean?.identityCardStart}" required="true"/></td>
+			     <td>身份证止:</td>
+			     <td><input name="identityCardEnd" class="easyui-datebox" th:value="${bean?.identityCardEnd}" required="true"/></td>
+			   </tr>
+			   <tr>
+			     <td>学历:</td>
+			     <td>
+			     <select name="education" class="easyui-combobox" style="width: 100%;">
+			        <option value="小学" th:selected="${bean?.education eq '小学'}">小学</option>
+			        <option value="初中" th:selected="${bean?.education eq '初中'}">初中</option>
+			        <option value="高中" th:selected="${bean?.education eq '高中'}">高中</option>
+			        <option value="中专" th:selected="${bean?.education eq '中专'}">中专</option>
+			        <option value="大专" th:selected="${bean?.education eq '大专'}">大专</option>
+			        <option value="本科" th:selected="${bean?.education eq '本科'}">本科</option>
+			        <option value="硕士" th:selected="${bean?.education eq '硕士'}">硕士</option>
+			        <option value="博士" th:selected="${bean?.education eq '博士'}">博士</option>
+			     </select>
+			    </td>
+			     <td>毕业院校:</td>
+			     <td><input name="graduateFrom" class="easyui-textbox" th:value="${bean?.graduateFrom}" /></td>
+			     <td>专业:</td>
+			     <td><input name="major" class="easyui-textbox" th:value="${bean?.major}" /></td>
+			   </tr>
+			   <tr>
+			     <td>证书编号:</td>
+			     <td><input name="certificateNumber" class="easyui-textbox" th:value="${bean?.certificateNumber}" /></td>
+			     <td>学习时间(始):</td>
+			     <td><input name="studyStart" class="easyui-datebox" th:value="${bean?.studyStart}" /></td>
+			     <td>毕业时间(末):</td>
+			     <td><input name="studyEnd" class="easyui-datebox" th:value="${bean?.studyEnd}" /></td>
+			   </tr>
+			   <tr>
+			     <td>学习模式:</td>
+			     <td><input name="schoolModel" class="easyui-textbox" th:value="${bean?.schoolModel}" /></td>
+			     <td>学习形式:</td>
+			     <td><input name="studyForm" class="easyui-textbox" th:value="${bean?.studyForm}" /></td>
+			   </tr>
+			   <tr>
+			     <td>职称证书:</td>
+			     <td><input name="credential" class="easyui-textbox" th:value="${bean?.credential}"/></td>
+			     <td>行车:</td>
+			     <td><input name="travellingCrane" type="checkbox" th:checked="${bean?.travellingCrane=='有'}" value="有" /></td>
+			     <td>叉车:</td>
+			     <td><input name="forklift" type="checkbox" th:checked="${bean?.forklift=='有'}" value="有" /></td>
+			   </tr>
+			   <tr>
+			     <td>电焊:</td>
+			     <td><input name="electricSoldering" type="checkbox" th:checked="${bean?.electricSoldering=='有'}" value="有" /></td>
+			     <td>安全员:</td>
+			     <td><input name="safetyOfficer" type="checkbox" th:checked="${bean?.safetyOfficer=='有'}" value="有" /></td>
+			     <td>电工证:</td>
+			     <td><input name="electricianCertificate" type="checkbox" th:checked="${bean?.electricianCertificate=='有'}" value="有" /></td>
+			   </tr>
+			   <tr>
+			     <td>工作地点:</td>
+			     <td>
+			     <select name="workLocation" class="easyui-combobox" style="width: 100%;">
+			       <option value="建工大道厂区" th:selected="${bean?.workLocation eq '建工大道厂区'}">建工大道厂区</option>
+			       <option value="金工路厂区" th:selected="${bean?.workLocation eq '金工路厂区'}">金工路厂区</option>
+			     </select>
+			     </td>
+			     <td>条线:</td>
+			     <td><input name="line" class="easyui-textbox" th:value="${bean?.line}" /></td>
+			   </tr>
+			   <tr>
+			   <td>备注:</td>
+			   <td colspan="5"><input name="remarks" style="width: 100%;height:100px" data-options="multiline:true" class="easyui-textbox" th:value="${bean?.remarks}"/></td>
+			   </tr>
+			</table>
+			
+</form>
+</body>
+</html>

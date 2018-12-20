@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/hr/getAttendanceList" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',toolbar:'#tb'"
+			rownumbers="false" fit="true" singleSelect="false" showRefresh="true">
+		<thead data-options="frozen:true">
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'userName',width:100">姓名</th>
+			</tr>
+		</thead>
+		<thead>
+			<tr>
+				<th data-options="field:'dueDay',width:80">应出勤</th>
+				<th data-options="field:'attendanceDay',width:80">实出勤</th>
+				<th data-options="field:'seniorityPay',width:80">工龄工资</th>
+				<th data-options="field:'salary',width:80">岗位工资</th>
+				<th data-options="field:'attendancePay',width:100">出勤工资</th>
+				<th data-options="field:'unitPrice',width:60">单价</th>
+				<th data-options="field:'weight',width:70">重量</th>
+				<th data-options="field:'piecePay',width:70">金额</th>
+				<th data-options="field:'lengthenHour',width:60">延长小时</th>
+				<th data-options="field:'restDay',width:80">休息日T</th>
+				<th data-options="field:'restPay',width:70">金额</th>
+				<th data-options="field:'otherHour',width:60">小时</th>
+				<th data-options="field:'otherPay',width:70">金额</th>
+				<th data-options="field:'tool',width:100">刀量具</th>
+				<th data-options="field:'qualityPrize',width:100">质量奖金</th>
+				<th data-options="field:'safetyPrize',width:100">安全奖金</th>
+				<th data-options="field:'attendanceBonus',width:100">满勤奖</th>
+				<th data-options="field:'examineMoney',width:100">考核金额</th>
+				<th data-options="field:'total',width:80">合计</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="tb" style="height:auto,padding:5px;">
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-add" onclick="edit(2)">新增</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="edit(1)">修改</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeAtten()">删除</a>
+		<input class="easyui-textbox" data-options="prompt:'姓名'" style="width:150px;height:32px" id="name" /> 
+		<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+	</div>		
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	     function doSearch(value, name) {
+			$('#dg').datagrid('load', {
+				name : $("#name").val()
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+
+function edit(type){
+        var url="";
+        var title = "";
+        if(type==1){
+          title = "修改";
+          var row = $('#dg').datagrid('getSelected');
+          if(!row){
+            $.messager.alert('提示信息','请选择一条数据!','warning');
+            return false;
+          }else{
+            url = "/hgerp/hr/attendanceEdit?id="+row.id;
+          }
+        }else{
+           title = "新增";
+           url = "/hgerp/hr/attendanceEdit";
+        }
+        
+    
+		$('<div></div>').dialog({
+            id : 'newDialog',
+            title : title,
+            width:500,
+            height:300,
+            closed : false,
+            cache : false,
+            href : url,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '保存',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/hr/doAttendanceEdit',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                   $("#newDialog").dialog('destroy');
+	                                   $('#dg').datagrid('reload');
+	                                   $.messager.show({
+	                                                    title : '消息提示',
+														msg : '操作成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+     }
+     
+     
+     function removeAtten(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length==0){
+	       $.messager.alert('提示信息', '请至少选择一条数据!', 'warning');
+	       return false;
+	    }
+	    var ids = "";
+		for (var x = 0; x < rows.length; x++) {
+		  if (x == 0) {
+			  ids = rows[x].id;
+		  } else {
+			  ids = ids + "," + rows[x].id;
+		  }
+		 }
+		 $.messager.confirm('提示信息', '确认该操作吗?', function(r){
+				if (r){
+					$.ajax({
+									type : "POST",
+									url : "/hgerp/hr/removeAtten",
+									data : {
+										ids : ids
+									},
+									success : function(data) {
+									   if(data=='success'){
+									     $.messager.show({
+											title : '消息提示',
+											msg : '操作成功！',
+											timeout : 1000,
+											showType : 'slide',
+											style : {
+												right : '',
+												bottom : ''
+											}
+										});
+										$('#dg').datagrid('clearSelections');
+										$('#dg').datagrid('reload');//
+									   }
+									}
+								})
+				}
+			});
+	  }
+		/*]]>*/
+</script>
+</body>
+</html>

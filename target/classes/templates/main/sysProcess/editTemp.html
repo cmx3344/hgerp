@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" >
+			<input type="hidden" th:value="${bean?.id}" name="id"/>
+			<div class="fitem">
+			<label>模板名称:</label> <input name="tempName" class="easyui-textbox" th:value="${bean?.tempName}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>使用状态:</label>
+			<select class="easyui-combobox" name="state" editable="false" style="width:200px;">
+			  <option value="启用" th:selected="${bean?.state=='启用'}">启用</option>
+		      <option value="停用" th:selected="${bean?.state=='停用'}">停用</option>
+	        </select>
+	        </div>
+	        <div class="fitem">
+			<label>备注:</label>
+			<input class="easyui-textbox" name="remarks" data-options="multiline:true" th:value="${bean?.remarks}" style="width:300px;height:100px" />
+	        </div>
+	        
+	        
+	 <div class="tableDiv" style="height: 300px">
+	    <table class="easyui-datagrid" style="width:100%;height:300px;" layoutH="0" id="myList" idField="id"
+			singleSelect = "true" th:attr="url=${'/hgerp/process/getTempSon?parentId='+bean?.id}"
+			data-options="method:'post',toolbar: '#toolbarx',fit:true,onClickRow: onClickRow,rownumbers:true">
+		<thead>
+			<tr>
+				<th data-options="field:'processId',align:'center',width:120,formatter:function(value,row){ 
+                            return row.procName; --值用于显示
+                        },editor:{type:'combobox',options:{valueField:'id',
+								textField:'chnName',
+								method:'get',
+								url:'/hgerp/process/getList',
+								required:true}}">工序</th>
+			</tr>
+		</thead>
+	  </table>
+	 <div id="toolbarx" style="height:auto">
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">添加选项</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除选项</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">提交操作 </a>
+	</div>
+	<script type="text/javascript">
+	
+	   var editIndex = undefined;
+		function endEditing(){
+			if (editIndex == undefined){return true}
+			if ($('#myList').datagrid('validateRow', editIndex)){
+			    var ed = $('#myList').datagrid('getEditor', {index:editIndex,field:'processId'});
+				var procName = $(ed.target).combobox('getText');
+				$('#myList').datagrid('getRows')[editIndex]['procName'] = procName;
+				$('#myList').datagrid('endEdit', editIndex);
+				editIndex = undefined;
+				return true;
+			} else {
+				return false;
+			}
+		}
+	   function onClickRow(index){
+			if (editIndex != index){
+				if (endEditing()){
+					$('#myList').datagrid('selectRow', index)
+							.datagrid('beginEdit', index);
+					editIndex = index;
+				} else {
+					$('#myList').datagrid('selectRow', editIndex);
+				}
+			}
+		}
+		
+		function append(){
+			if (endEditing()){
+				$('#myList').datagrid('appendRow',{status:'P'});
+				editIndex = $('#myList').datagrid('getRows').length-1;
+				$('#myList').datagrid('selectRow', editIndex)
+						.datagrid('beginEdit', editIndex);
+			}
+		}
+		function removeit(){
+			if (editIndex == undefined){return}
+			$.messager.confirm('确认提示!', '确定删除改行吗?', function(r){
+				if (r){
+					var row = $("#myList").datagrid('getSelected');
+			         $('#myList').datagrid('cancelEdit', editIndex)
+					.datagrid('deleteRow', editIndex);
+		             $.ajax({
+		               url:"/hgerp/process/deletTempSon",
+		               data:{id:row.id},
+		               success:function(){}
+		            })
+			        editIndex = undefined;
+				}
+			});
+			
+		}
+		function accept(){
+			if (endEditing()){
+				$('#myList').datagrid('acceptChanges');
+			}
+		}
+	</script>
+	  </div>
+</form>
+</body>
+</html>

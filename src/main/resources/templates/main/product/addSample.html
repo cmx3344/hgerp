@@ -1,0 +1,117 @@
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe">
+            <input type="hidden" name="id" th:value="${bean?.id}"/>
+            <input type="hidden" id="sizeA" th:value="${bean?.sizeA}"/>
+            <input type="hidden" id="sizeB" th:value="${bean?.sizeB}"/>
+            <input type="hidden" id="sizeC" th:value="${bean?.sizeC}"/>
+            <input type="hidden" id="sizeD" th:value="${bean?.sizeD}"/>
+            <input type="hidden" id="sizeE" th:value="${bean?.sizeE}"/>
+            <input type="hidden" id="sizeF" th:value="${bean?.sizeF}"/>
+            <input type="hidden" id="sizeG" th:value="${bean?.sizeG}"/>
+            <input type="hidden" id="sizeH" th:value="${bean?.sizeH}"/>
+            <input  id="serialNumx" type="hidden" th:value="${bean?.serialNum}"/>
+   <label>选择工艺路线:</label>
+	   <select class="easyui-combobox" required="true" name="processId">
+				   <option value="4">下料</option>
+				   <option value="5">锻造</option>
+				   <option value="6">锻后热处理</option>
+				   <option value="7">粗加工</option>
+				   <option value="8">性能热处理</option>
+				   <option value="13">取样</option>
+				   <option value="9">交货加工</option>
+				   <option value="10">后续热处理</option>
+				   <option value="11">半精加工</option>
+				   <option value="12">精加工</option>
+				   <!-- <option th:each="son: ${list}" th:value="${son.id}" th:text="${son.procName}" ></option> -->
+				</select>
+	
+	<!--  -->
+            <div class="tableDiv" style="height: 300px">
+	    <table class="easyui-datagrid" style="width:100%;height:300px;" layoutH="0" id="myList" idField="id"
+			singleSelect = "true"
+			data-options="method:'post',toolbar: '#toolbarx',fit:true,onClickRow: onClickRow,rownumbers:true">
+		<thead>
+		    <tr>
+				<th rowspan="2" data-options="field:'serialNum',align:'center',width:150,editor:{type:'textbox',options:{required:true}}" >锻件编号</th>
+				<th rowspan="2" data-options="field:'orderNum',align:'center',width:80,editor:{type:'textbox',options:{required:true}}" >序号</th>
+				<th rowspan="2" data-options="field:'qty',align:'center',width:80,editor:{type:'numberbox',options:{required:true}}" >生产数量</th>
+				<!-- <th rowspan="2" data-options="field:'actQty',align:'center',width:80,editor:{type:'numberbox',options:{required:true}}" >实际数量</th> -->
+				<th colspan="8">规格</th>
+			</tr>
+			<tr>
+				<th data-options="field:'sizeA',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<th data-options="field:'sizeB',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<th data-options="field:'sizeC',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<th data-options="field:'sizeD',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<th data-options="field:'sizeE',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<th data-options="field:'sizeF',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<th data-options="field:'sizeG',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<th data-options="field:'sizeH',align:'center',width:80,editor:{type:'text'}" >-</th>
+				<!-- <th data-options="field:'productQty',align:'center',width:80,editor:{type:'numberbox',options:{required:true}}" >生产数量</th> -->
+			</tr>
+		</thead>
+	  </table>
+	 <div id="toolbarx" style="height:auto">
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">添加选项</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除选项</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">提交操作 </a>
+		<input readonly="readonly" value="Φ" />
+	</div>
+	<script type="text/javascript">
+	   var editIndex = undefined;
+		function endEditing(){
+			if (editIndex == undefined){return true}
+			$('#myList').datagrid('endEdit', editIndex);
+				editIndex = undefined;
+				return true;
+		}
+	   function onClickRow(index){
+			if (editIndex != index){
+				if (endEditing()){
+					$('#myList').datagrid('selectRow', index)
+							.datagrid('beginEdit', index);
+					editIndex = index;
+				} else {
+					$('#myList').datagrid('selectRow', editIndex);
+				}
+			}
+		}
+		
+		function append(){
+			if (endEditing()){
+			    var serialNum = $("#serialNumx").val();
+			    var sizeA = $("#sizeA").val();
+			    var sizeB = $("#sizeB").val();
+			    var sizeC = $("#sizeC").val();
+			    var sizeD = $("#sizeD").val();
+			    var sizeE = $("#sizeE").val();
+			    var sizeF = $("#sizeF").val();
+			    var sizeG = $("#sizeG").val();
+			    var sizeH = $("#sizeH").val();
+				$('#myList').datagrid('appendRow',{serialNum:serialNum,sizeA:sizeA,sizeB:sizeB,sizeC:sizeC,sizeD:sizeD,sizeE:sizeE,sizeF:sizeF,sizeG:sizeG,sizeH:sizeH});
+				editIndex = $('#myList').datagrid('getRows').length-1;
+				$('#myList').datagrid('selectRow', editIndex)
+						.datagrid('beginEdit', editIndex);
+			}
+		}
+		function removeit(){
+			if (editIndex == undefined){return}
+			$('#myList').datagrid('cancelEdit', editIndex)
+					.datagrid('deleteRow', editIndex);
+			editIndex = undefined;
+			
+		}
+		function accept(){
+			if (endEditing()){
+				$('#myList').datagrid('acceptChanges');
+			}
+		}
+	</script>
+	  </div>
+	  <h1 style="color: red;">注：实际数量为必填项，如果是合锻件，生产数量和实际件数不一致(如:4件2合一,生产数量2,实际数量4)<br/>如不是合锻件，则和生产数量一致(如:生产数量4,实际数量4)</h1>
+		</form>
+</body>
+</html>

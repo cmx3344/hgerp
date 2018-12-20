@@ -1,0 +1,24 @@
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe">
+<input  name="ids" th:value="${ids}" type="hidden"/>
+<input  name="type" value="15" type="hidden"/>
+			<div class="fitem">
+				<label>锻造/锻造出坯施工单日期:</label>
+				<input name="forgingDate" class="easyui-datebox" required="true" />
+			</div>
+			<div class="fitem">
+				<label>锻造/锻造出坯设备:</label>
+			<select name="forgingWork">
+			   <option ></option>
+			   <option value="2500T压机">2500T压机</option>
+			   <option value="5T锤">5T锤</option>
+			   <option value="8T锤">8T锤</option>
+			   <option value="小锤">小锤</option>
+			</select>
+			</div>
+		</form>
+</body>
+</html>

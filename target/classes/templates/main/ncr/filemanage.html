@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+            <table width="100%">
+	           <tr><td colspan="2" style="color: red;font-weight: bold;">附件</td></tr>
+	           <tr th:each="file:${list}">
+	               <td th:text="${file.name}"></td>
+	               <td><a th:href="@{'/ncr/download?id='+${file.id}}">下载</a></td>
+	           </tr>
+	        </table>			
+</body>
+</html>

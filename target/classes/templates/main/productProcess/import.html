@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<form id="fm" method="post" >
+<table style="width: 100%;">
+   <tr>
+     <td>请选择数据所在sheet页的页数</td><td><select name="sheetIndex" required="true" class="easyui-combobox" style="width: 100px;">
+  <option></option>
+  <option value="0">1</option>
+  <option value="1">2</option>
+  <option value="2">3</option>
+  <option value="3">4</option>
+  <option value="4">5</option>
+  <option value="5">6</option>
+</select></td>
+   </tr>
+   <tr>
+     <td>开始行数(含当前行)</td><td><input class="easyui-numberbox" name="currentNum" required="true" style="width:100px;" /></td>
+   </tr>
+   <tr>
+     <td>锻件编号</td><td><input class="easyui-numberbox" name="serialNum" required="true" style="width: 100px;" /></td>
+   </tr>
+   <tr>
+     <td>锻造尺寸</td><td><input class="easyui-numberbox" name="forgingNum" required="true" style="width:100px;" /></td>
+   </tr>
+</table>
+
+<input type="hidden" id="excelFile" name="excelFile"/>
+		
+<input id="file_upload" name="myfiles" type="file" multiple="true"/>
+		<script type="text/javascript">
+	  /*<![CDATA[*/
+$(function() {
+    $("#file_upload").uploadify({
+        height        : 30,
+        swf           : '/hgerp/uploadify/uploadify.swf',
+        uploader      : '/hgerp/fileManage/upload',
+        width         : 120,
+        buttonText: '上传excel文件',
+        fileTypeExts: '*.xlsx',
+        fileObjName: 'myfiles',
+        fileSizeLimit:'100000',
+        multi: false,
+        simUploadLimit : 1,
+        uploadLimit:1,
+        removeCompleted : false,
+        auto: true,
+        onUploadSuccess: function (file, data, response) {
+        	$("#excelFile").val(data);
+        }
+    });
+});
+		/*]]>*/
+</script>
+		
+</form>
+</body>
+</html>

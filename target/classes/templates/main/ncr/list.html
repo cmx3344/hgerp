@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/ncr/getNcrList" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',pagination:true,pageSize:100,pageList: [100,200,500,1000],toolbar:'#tb'"
+			rownumbers="true" fit="true" singleSelect="false" showRefresh="true">
+		<thead >
+			<tr>
+			   <th data-options="field:'ck',checkbox:true"></th>
+			   <th data-options="field:'reportPerson',width:80">报告人</th>
+			   <th data-options="field:'reportDate',width:80">日期</th>
+			   <th data-options="field:'ncrNum',width:100">报告编号</th>
+			   <th data-options="field:'serialNum',width:120">锻件编号</th>
+			   <th data-options="field:'orderNum',width:60">序号</th>
+			   <th data-options="field:'handleType',width:80">处置方式</th>
+			   <th data-options="field:'unitType',width:80">单位类型</th>
+			   <th data-options="field:'units',width:80">单位</th>
+			   <th data-options="field:'responsibleDep',width:80">责任部门</th>
+			   <th data-options="field:'equipment',width:80">设备</th>
+			   <th data-options="field:'ncrType',width:80">类型</th>
+			   <th data-options="field:'reason',width:200,formatter:formattersss">不合格原因</th>
+			   <th data-options="field:'fromProcess',width:80">状态</th>
+			   <th data-options="field:'backDate',width:80">回单日期</th>
+			   <th data-options="field:'state',width:70,formatter:formatterstate">处理状态</th>
+			   <th data-options="field:'remarks',width:100">备注</th>	
+				<!-- <th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'ncrNum',width:100">不合格编号</th>
+				<th data-options="field:'serialNum',width:100">锻件编号</th>
+				<th data-options="field:'orderNum',width:30">序号</th>
+				<th data-options="field:'fromProcess',width:80">发生工序</th>
+				<th data-options="field:'reason',width:200">不合格描述</th>
+				<th data-options="field:'operator',width:80">发起人</th>
+				<th data-options="field:'opTime',width:120">发起时间</th>
+				<th data-options="field:'handleType',width:100,formatter:formattertype">处理方式</th>
+				<th data-options="field:'handleOpinion',width:250">处理意见</th>
+				<th data-options="field:'remarks',width:100">备注</th>
+				<th data-options="field:'state',width:100,formatter:formatterstate">处理状态</th>
+				<th data-options="field:'handler',width:100">处理人</th>
+				<th data-options="field:'handleTime',width:100">处理时间</th> -->
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="tb" style="height:auto,padding:5px;">
+	   <input type="hidden" id="type" th:value="${type}" />
+		<div style="margin:5px">
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="handle()">不合格处理</a>
+			<!-- <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="updateState()">设置为已处理</a> -->
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-print" onclick="downLoadNcr()">导出不合格报告</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-print" onclick="downLoadb()">导出探伤不合格报告</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-menu" onclick="checkFile()">查看附件</a>
+			<input class="easyui-textbox" data-options="prompt:'报告编号'" style="width:150px;height:32px" id="ncrNum" /> 
+			<input class="easyui-textbox" data-options="prompt:'锻件编号'" style="width:150px;height:32px" id="serialNum" /> 
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-reload" onclick="doSearch2()">返工/返修待处置</a>
+		</div>
+	</div>
+
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	  
+	  function doSearch(value, name) {
+			$('#dg').datagrid('reload', {
+				serialNum : $("#serialNum").val(),
+				ncrNum : $("#ncrNum").val()
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+		
+		function doSearch2(value, name) {
+			$('#dg').datagrid('reload', {
+				state : 3
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+	function formatterstate(val,row){
+	     if(val==1){
+	       return '待处理';
+	     }
+	     if(val==2){
+	       return '已处理';
+	     }
+	     if(val==3){
+	       return '返工/返修待处置';
+	     }
+	  }
+	 
+	 
+	 function formattersss(value,row,index) {
+        return '<div style="width=250px;word-break:break-all;word-wrap:break-word;white-space:pre-wrap;">'+value+'</div>';
+     }
+	 
+	 function handle(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length!=1){
+	       $.messager.alert('提示信息', '请选择一条数据!', 'warning');
+	       return false;
+	    }
+	    /* if(rows[0].state==2){
+	       $.messager.alert('提示信息', '不能操作已处理的数据!', 'warning');
+	       return false;
+	    } */
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '不合格处理',
+            width:800,
+            height:500,
+            closed : false,
+            cache : false,
+            href : '/hgerp/ncr/toHandle?id='+rows[0].id,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '确定',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/ncr/doHandle',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                 if(data == 'success'){
+	                                     $("#newDialog").dialog('destroy');
+	                                     $.messager.show({
+	                                                    title : '消息提示',
+														msg : '操作成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+										$('#dg').datagrid('clearSelections');
+										$('#dg').datagrid('reload');
+	                                 }
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+
+      function updateState(){
+       var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length==0){
+	       $.messager.alert('提示信息', '请至少选择一条数据!', 'warning');
+	       return false;
+	    }
+	    var ids = "";
+		for (var x = 0; x < rows.length; x++) {
+		  if (x == 0) {
+			  ids = rows[x].id;
+		  } else {
+			  ids = ids + "," + rows[x].id;
+		  }
+		 }
+         		 $.messager.confirm('完成前请仔细确认', '确定继续操作吗?', function(r){
+				if (r){
+				    $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                    });
+					$.ajax({
+									type : "POST",
+									url : "/hgerp/ncr/updateState",
+									data : {
+										ids : ids
+									},
+									success : function(data) {
+									   $.messager.progress('close');
+									   if(data=='success'){
+									     $.messager.show({
+											title : '消息提示',
+											msg : '操作成功！',
+											timeout : 1000,
+											showType : 'slide',
+											style : {
+												right : '',
+												bottom : ''
+											}
+										});
+										$('#dg').datagrid('clearSelections');
+										$('#dg').datagrid('reload');
+									   }else if(data=='notAllow'){
+									      $.messager.alert('提示信息', '该锻件必须先做检验再进入下个工序,谢谢配合', 'warning');
+									   }else if(data=='notAllow2'){
+									      $.messager.alert('提示信息', '出坯工序无法使用该功能!', 'warning');
+									   }else{
+									      $.messager.alert('提示信息', '操作失败!', 'warning');
+									   }
+									}
+								})
+				}
+			});
+      }
+      
+      	$(function(){
+        $('#dg').datagrid({
+            view: detailview,
+            detailFormatter:function(index,row){
+                return '<div class="ddv"></div>';
+            },
+            onExpandRow: function(index,row){
+                var ddv = $(this).datagrid('getRowDetail',index).find('div.ddv');
+                ddv.panel({
+                    border:false,
+                    cache:true,
+                    href:'/hgerp/ncr/getNcrSon?id='+row.id,
+                    onLoad:function(){
+                        $('#dg').datagrid('fixDetailRowHeight',index);
+                        $('#dg').datagrid('selectRow',index);
+                        $('#dg').datagrid('getRowDetail',index).find('form').form('load',row);
+                    }
+                });
+                $('#dg').datagrid('fixDetailRowHeight',index);
+            }
+        });
+
+    });
+    
+	 function ncrSpilt(id,ncrId){
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '拆分',
+            maximized:true,
+            closed : false,
+            cache : false,
+            href : '/hgerp/ncr/toSplit?id='+id+'&ncrId='+ncrId,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '确定',
+                iconCls : 'icon-ok',
+                handler : function() {
+                   $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                    });
+                   var isValid = $("#fm").form('validate');
+					if (isValid) {
+						var rows2 = $('#myList').datagrid('getRows');
+						var xx = {};
+						if (endEditingb()) {
+							$('#myList').datagrid('acceptChanges');
+						}
+						for (var i = 0; i < rows2.length; i++) {
+							for ( var key in rows2[i]) {
+								xx["listP[" + i + "]."+ key] = rows2[i][key];
+							}
+						}
+						var formData = $("#fm").serializeArray();
+						for ( var n in formData) {
+							var data = formData[n];
+							xx[data.name] = data.value;
+						}
+						$.ajax({    url : '/hgerp/ncr/doSplit',
+									data : xx,
+									async:false,
+									success : function(res) {
+									        $.messager.progress('close');
+											if (res == 'success') {
+												$("#newDialog").dialog('destroy');
+												$.messager.show({
+													title : '消息提示',
+													msg : '操作成功！',
+													timeout : 1000,
+													showType : 'slide',
+													style : {
+														right : '',
+														bottom : ''
+													}
+												});
+												$('#dg').datagrid('reload');
+												$('#dg').datagrid('clearSelections');
+											}
+											if (res == 'fail') {
+											    $.messager.alert('提示信息', '至少添加两行!', 'warning');
+											}
+											if (res == 'qty') {
+											    $.messager.alert('提示信息', '数量必填!', 'warning');
+											}
+									}
+								})
+							} else {
+							    $.messager.progress('close');
+                                $.messager.alert('提示信息', '请将数据填写完整!', 'warning');
+							}
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+        });
+	  }
+	  	 function downLoadNcr() {
+			var rows = $("#dg").datagrid('getSelections');
+			if (rows.length == 1) {
+			
+			   $.messager.confirm('确认信息', '确定导出吗?', function(r){
+				if (r){
+				    $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                    });
+				   window.open("/hgerp/ncr/downLoad?id=" + rows[0].id);
+				   $.messager.progress('close');
+				}
+			});
+			
+			} else {
+				$.messager.alert('提示信息', '请选择一条数据!', 'warning');
+			}
+		}
+		
+	  function downLoadb() {
+			var rows = $("#dg").datagrid('getSelections');
+			if (rows.length == 1) {
+			
+			   $.messager.confirm('确认信息', '确定导出吗?', function(r){
+				if (r){
+				    $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                    });
+				   window.open("/hgerp/ncr/downLoadb?id=" + rows[0].id);
+				   $.messager.progress('close');
+				}
+			});
+			
+			} else {
+				$.messager.alert('提示信息', '请选择一条数据!', 'warning');
+			}
+		}	
+		
+	  function checkFile(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length!=1){
+	       $.messager.alert('提示信息', '请选择一条数据!', 'warning');
+	       return false;
+	    }
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '查看文件',
+            width:500,
+            height:300,
+            closed : false,
+            cache : false,
+            href : '/hgerp/ncr/checkFile?id='+rows[0].id,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+	  
+	  	function handleNcr(id,ncrSonId){
+	    //var rows = $("#dg").datagrid('getSelections');
+	    //if(rows.length!=1){
+	     //  $.messager.alert('提示信息', '请选择一条数据进行操作!', 'warning');
+	     //  return false;
+	    //}
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '不合格处理',
+            width:400,
+            height:400,
+            closed : false,
+            cache : false,
+            href : '/hgerp/ncr/toHandleb?id='+id+'&ncrSonId='+ncrSonId,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '确定',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/ncr/doHandleb',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                 if(data == 'success'){
+	                                     $("#newDialog").dialog('destroy');
+	                                     $.messager.show({
+	                                                    title : '消息提示',
+														msg : '操作成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+										$('#dg').datagrid('reload');
+	                                 }
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+		/*]]>*/
+</script>
+</body>
+</html>

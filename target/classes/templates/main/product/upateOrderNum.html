@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${bean.id}" name="id"/>
+			<div class="fitem">
+			<label>锻件编号:</label>
+			    <input class="easyui-textbox" required="true" style="width: 150px;" name="serialNum" th:value="${bean.serialNum}"/>
+	        </div>
+	        <div class="fitem">
+			<label>序号:</label>
+			    <input class="easyui-textbox" required="true" style="width: 150px;" name="orderNum" th:value="${bean.orderNum}" />
+	        </div>
+	        <div class="fitem">
+			<label>生产数量:</label>
+			    <input class="easyui-numberbox" required="true" style="width: 150px;" name="qty" th:value="${bean.qty}"/>
+	        </div>
+	        <div class="fitem">
+			<label>下料重(供参考):</label>
+			    <input class="easyui-numberbox" readonly="readonly" style="width: 150px;background-color: #eee;" th:value="${bean.blankWeight==null||bean.blankWeight==''?0:bean.blankWeight}"/>
+	        </div>
+	        <div class="fitem">
+			<label>实际单重:</label>
+			    <input class="easyui-numberbox" required="true" style="width: 150px;" name="actUnitWeight" th:value="${bean.actUnitWeight}"/>
+	        </div>
+	        <!-- <div class="fitem">
+			<label>实际数量:</label>
+			    <input class="easyui-numberbox" required="true" style="width: 150px;" name="actQty" th:value="${bean.actQty}"/>
+	        </div> -->
+	        <!-- <h2 style="color: red;">注：序号中只允许填“-”和“~”符号来作为连接</h2>  -->
+	        <h1 style="color: red;">注：修改数量时,如果下料重量不是实际单重时,请修改为对应的实际单重,否则请填下料重,不要嫌麻烦,谢谢！</h1>
+</form>
+</body>
+</html>

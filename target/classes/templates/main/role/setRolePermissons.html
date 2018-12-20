@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body >
+<div th:include="/common/common_head::onloadJs" ></div>
+<a href="javascript:;" class="easyui-linkbutton" onclick="save()" data-options="iconCls:'icon-save'" style="position: fixed;top: 10px;left: 300px;">保存</a>
+<input type="hidden" th:value="${id}" id="roleId"/>
+	<script type="text/javascript">
+		  /*<![CDATA[*/
+		var setting = {
+			check: {
+				enable: true
+			},
+			data: {
+				simpleData: {
+					enable: true,
+					idKey: "id",
+					pIdKey: "parentId",
+					rootPId: 0
+				}
+			}
+		};
+
+		$(document).ready(function(){
+			$.ajax({
+				type:'POST',
+				url:'/hgerp/api/permission/getRolePermissionTree',
+				data:{id:$("#roleId").val()},
+				async:false,
+				dataType:'json',
+				success:function (data){
+					$.fn.zTree.init($("#treeDemo"), setting, data);
+				}
+			})
+		});
+		
+		function save(){
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			var nodes = treeObj.getCheckedNodes(true);
+			if(nodes.length>0){
+				var ids = "";
+				for(var i = 0;i<nodes.length;i++){
+					if(i==0){
+						ids=nodes[i].id;
+					}else{
+						ids=ids+","+nodes[i].id;
+					}
+				}
+				$.post("/hgerp/api/permission/authorize",{id:$("#roleId").val(),permissions:ids}, function(data) {
+					$.messager.show({
+        				title:'消息提示',
+        				msg:'操作成功！',
+        				timeout:1000,
+        				showType:'slide',
+        				style:{
+        					right:'',
+        					bottom:''
+        				}
+        			});
+				});
+			}else{
+				$.messager.alert("Warning", "请选择权限节点！", 'error');
+			}
+		}
+					/*]]>*/
+	</script>
+	<div class="zTreeDemoBackground left">
+		<ul id="treeDemo" class="ztree"></ul>
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<form id="fm" method="post" target="myframe" >
+    	 <table class="gridtable" style="width: 100%;">
+			   <tr style="height: 30px;">
+			        <th>操作节点</th><th>操作人</th><th>操作时间</th>
+			   </tr>
+			   <tr style="height: 30px;" th:each="item,i: ${list}" >
+			     <td th:text="${item?.elementName}"></td>
+			     <td th:text="${item?.username}"></td>
+			     <td th:text="${item?.operateTime}"></td>
+			     </tr>
+		</table>
+</form>
+</body>
+</html>

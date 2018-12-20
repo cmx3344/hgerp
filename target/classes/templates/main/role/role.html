@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<div class="easyui-layout" style="width:100%;height:700px;" fit="true">
+<div data-options="region:'west',title:'角色列表',iconCls:'icon-lock'" iconCls="icon-lock" style="width: 40%;">
+	<table id="role-grid" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/api/role/all" method="get" idField="id"
+			data-options="onClickRow:setRoleTree"
+			rownumbers="false"  fitColumns="true" singleSelect="true" >
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'id'">角色ID</th>
+				<th data-options="field:'name'">角色名</th>
+				<th data-options="field:'role',align:'center'">角色标识</th>
+				<th data-options="field:'description',align:'center'">角色描述</th>
+			</tr>
+		</thead>
+	</table>
+<script type="text/javascript">
+	  /*<![CDATA[*/
+   $(function (){
+		$('#role-grid').datagrid(
+				{
+					toolbar : [
+	                        {
+								text : '增加角色',
+								iconCls : 'icon-add',
+								handler : function() {
+									editRole(1);
+								}
+							},
+							'-',
+							{
+								text : '编辑角色',
+								iconCls : 'icon-edit',
+								handler : function() {
+									editRole(2);
+								}
+							},
+							'-',
+							{
+								text : '删除',
+								iconCls : 'icon-remove',
+								handler : function() {
+								 var selectRow = $('#role-grid').datagrid('getSelected');
+							     if(selectRow){
+							     
+							     $.messager.confirm('Confirm','Are you sure you want to delete this role?',function(r){
+                                  if (r){  
+		                            $.ajax({
+										  type : 'DELETE',
+										  url : '/hgerp/api/role/delete?id' + '='
+												+ selectRow.id,
+										  success : function(result) {
+											if (result == "OK") {
+												$('#role-grid').datagrid('reload'); // reload
+											} else
+												$.messager.alert("Warning", "该角色无法删除！", 'error');
+										  },
+										  error : function(XMLHttpRequest,
+												textStatus, errorThrown) {
+											  $.messager.alert("Warning", "删除失败！", 'error');
+										  }
+									     });
+                                     }
+                                   });
+							     
+							     }else{
+							    	 $.messager.alert("Warning", "请选择要删除的行！", 'error');
+							     }
+								}
+							}
+					]
+				});
+   })
+   
+   
+   	  function editRole(type){
+	    if(type == 1){
+			$('<div></div>').dialog({
+	            id : 'newDialog',
+	            title : '添加角色',
+	            maximizable:true,
+	            maximized:true,
+	            closed : false,
+	            cache : false,
+	            href : '/hgerp/api/role/edit',
+	            modal : true,
+	            onLoad : function() {
+	                //初始化表单数据
+	            },
+	            onClose : function() {
+	                $(this).dialog('destroy');
+	            },
+	            buttons : [{
+	                text : '保存',
+	                iconCls : 'icon-ok',
+	                handler : function() {
+	                	$('#fm').form('validate');
+	                    $.ajax({
+	                        //几个参数需要注意一下
+	                            type: "POST",
+	                            async: false,
+	                            url:  "/hgerp/api/role/save",
+	                            data: $('#fm').serialize(),
+	                            success: function (result) {
+	                                if (result == 'success') {
+	                                	$.messager.show({
+	                        				title:'消息提示',
+	                        				msg:'操作成功！',
+	                        				timeout:1000,
+	                        				showType:'slide',
+	                        				style:{
+	                        					right:'',
+	                        					bottom:''
+	                        				}
+	                        			});
+	                                	$("#newDialog").dialog('destroy');
+	                                	$('#role-grid').datagrid('reload');
+	                                	$('#role-grid').datagrid('clearSelections');
+	                                }
+	                            },
+	                            error : function() {
+	                                alert("异常！");
+	                            }
+	                        });
+	                }
+	            }, {
+	                text : '关闭',
+	                iconCls : 'icon-cancel',
+	                handler : function() {
+	                    $("#newDialog").dialog('destroy');
+	                }
+	            } ],
+
+	        });
+	    }else{
+	    	var row = $("#role-grid").datagrid('getSelected');
+			if(row){
+				$('<div></div>').dialog({
+		            id : 'newDialog',
+		            title : '编辑角色',
+		            maximizable:true,
+		            maximized:true,
+		            closed : false,
+		            cache : false,
+		            href : '/hgerp/api/role/edit?id='+row.id,
+		            modal : true,
+		            onLoad : function() {
+		                //初始化表单数据
+		            },
+		            onClose : function() {
+		                $(this).dialog('destroy');
+		            },
+		            buttons : [{
+		                text : '保存',
+		                iconCls : 'icon-ok',
+		                handler : function() {
+		                    $.ajax({
+		                        //几个参数需要注意一下
+		                            type: "POST",
+		                            async: false,
+		                            url:  "/hgerp/api/role/save",
+		                            data: $('#fm').serialize(),
+		                            success: function (result) {
+		                                if (result == 'success') {
+		                                	$.messager.show({
+		                        				title:'消息提示',
+		                        				msg:'操作成功！',
+		                        				timeout:1000,
+		                        				showType:'slide',
+		                        				style:{
+		                        					right:'',
+		                        					bottom:''
+		                        				}
+		                        			});
+		                                	$("#newDialog").dialog('destroy');
+		                                	$('#role-grid').datagrid('reload');
+		                                	$('#role-grid').datagrid('clearSelections');
+		                                }
+		                            },
+		                            error : function() {
+		                                alert("异常！");
+		                            }
+		                        });
+		                }
+		            }, {
+		                text : '关闭',
+		                iconCls : 'icon-cancel',
+		                handler : function() {
+		                    $("#newDialog").dialog('destroy');
+		                }
+		            } ],
+
+		        });
+			}else{
+				$.messager.alert('提示信息','请选择至少一条数据!','warning');
+			}
+	    }
+	}
+ 
+	function setRoleTree(rowIndex,rowData){
+		var tabs = $('#setMenu');
+			var src = '/hgerp/api/permission/rolePermission?id='+rowData.id;
+			if ($('#setMenu').tabs('exists', '设置权限')){
+				$('#setMenu').tabs('close', '设置权限')
+			} 
+			   var content = '<iframe scrolling="auto" frameborder="0"  src="'+src+'" style="width:100%;height:100%;"></iframe>';
+			    $('#setMenu').tabs('add',{
+				   title:'设置权限',
+				   iconCls : 'icon-add',
+				   content:content,
+				   fit : true,
+				   closable:true
+			   });
+	}
+			/*]]>*/
+</script>
+</div>
+<div data-options="region:'center',title:'权限列表',iconCls:'icon-man'" style="padding:5px;height:auto">                
+            <div id="setMenu" class="easyui-tabs" fit="true" border="false">
+               
+            </div>
+        </div>
+</div>
+</body>
+</html>

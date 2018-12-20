@@ -1,0 +1,26 @@
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe">
+			<div class="fitem">
+				<label>模板名称:</label>
+				<select class="easyui-combogrid" id="tempId" name="tempId"
+		 th:attr="url=${'/hgerp/process/getTempList'}"
+		 value="1" required="true" style="width:250px" data-options="
+			panelWidth: 500,
+			idField: 'id',
+			textField: 'tempName',
+			method: 'get',
+			editable:false,
+			columns: [[
+				{field:'tempName',title:'模板名称',width:120}
+			]],
+			fitColumns: true
+		">
+	</select>
+				<input type="hidden" name="ids" th:value="${ids}"/>
+			</div>
+		</form>
+</body>
+</html>

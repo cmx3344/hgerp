@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/product/getList?state=1" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',pagination:true,pageSize:500,pageList: [100,200,500,1000],toolbar:'#tb',onDblClickCell: onClickCell"
+			rownumbers="true" fit="true" singleSelect="false" showRefresh="true">
+		<thead frozen="true">
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'productNum',width:80,editor:'text'">生产编号</th>
+				<th data-options="field:'code',width:40,editor:'text'">代号</th>
+				<th data-options="field:'poNum',width:80,editor:'text'">合同编号</th>
+				<th data-options="field:'poDate',width:80,editor:'text'">合同交货期</th>
+				<th data-options="field:'poUpdateDate',width:70,editor:'text'">更改交货期</th>
+				<th data-options="field:'remarksA',width:80,editor:'text'">备注1</th>
+				<th data-options="field:'remarksB',width:80,editor:'text'">备注2</th>
+				<th data-options="field:'material',width:80,editor:'text'">材质</th>
+				<th data-options="field:'grade',width:50,editor:'text'">等级</th>
+				<th data-options="field:'serialNum',width:120,editor:'text'">锻件编号</th>
+				<th data-options="field:'orderNum',width:60,editor:'text'">序号</th>
+				<th data-options="field:'tempName',width:100">已选模板</th>
+				
+			</tr>
+		</thead>
+		<thead>
+			<tr><th data-options="field:'sizeA',width:30,editor:'text'"></th>
+				<th data-options="field:'sizeB',width:50,editor:'text'"></th>
+				<th data-options="field:'sizeC',width:30,editor:'text'"></th>
+				<th data-options="field:'sizeD',width:50,editor:'text'"></th>
+				<th data-options="field:'sizeE',width:30,editor:'text'"></th>
+				<th data-options="field:'sizeF',width:50,editor:'text'"></th>
+				<th data-options="field:'sizeG',width:30,editor:'text'"></th>
+				<th data-options="field:'sizeH',width:50,editor:'text'"></th>
+			    <th data-options="field:'poQty',width:80,editor:'text'">订单总数</th>
+				<th data-options="field:'blankWeight',width:70,editor:'text'">下料重</th>
+				<th data-options="field:'qty',width:70,editor:'text'">生产数量</th>
+				<th data-options="field:'description',width:120,editor:'text'">说明</th>
+				<th data-options="field:'qualityRequire',width:100,editor:'text'">质量要求</th>
+				<th data-options="field:'ndtRequire',width:100,editor:'text'">探伤要求</th>
+				<th data-options="field:'deliveryState',width:100,editor:'text'">交货状态</th>
+				<th data-options="field:'htRequire',width:80,editor:'text'">热处理要求</th>
+				<th data-options="field:'htRequireB',width:100,editor:'text'"></th>
+				<th data-options="field:'nextProcess',width:100,editor:'text'">后续工序</th>
+				<th data-options="field:'hdnsRequire',width:100,editor:'text'">硬度要求</th>
+				<th data-options="field:'otherRequire',width:100,editor:'text'">其他要求</th>
+				<th data-options="field:'forgingEquip',width:100,editor:'text'">锻造工艺设备</th>
+				<th data-options="field:'materialNum',width:100,editor:'text'">物料号</th>
+				<th data-options="field:'dwgNum',width:150,editor:'text'">图号</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="tb" style="height:auto,padding:5px;">
+	   <input type="hidden" id="type" th:value="${type}" />
+		<div style="margin:5px">
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-add" onclick="importExcel()">产品信息导入</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="setTemp()">设置工序模板</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="split()">拆分</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="nextElement()">进入审核</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeProd()">删除</a>
+			<input class="easyui-textbox" data-options="prompt:'锻件编号'" style="width:150px;height:32px" id="serialNum" /> 
+			<input class="easyui-textbox" data-options="prompt:'材质'" style="width:150px;height:32px" id="material" /> 
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+		</div>
+	</div>
+
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	  
+	  function doSearch(value, name) {
+	        endEditing();
+			$('#dg').datagrid('load', {
+				serialNum : $("#serialNum").val(),
+				material : $("#material").val()
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+	
+	  function setTemp(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length==0){
+	       $.messager.alert('提示信息', '请至少选择一条数据!', 'warning');
+	       return false;
+	    }
+	    var ids = "";
+		for (var x = 0; x < rows.length; x++) {
+		  if (x == 0) {
+			  ids = rows[x].id;
+		  } else {
+			  ids = ids + "," + rows[x].id;
+		  }
+		 }
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '设置模板',
+            width:400,
+            height:200,
+            closed : false,
+            cache : false,
+            href : '/hgerp/product/setTemp?ids='+ids,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '确定',
+                iconCls : 'icon-ok',
+                handler : function() {
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/product/doSetTemp',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                 if(data == 'fail'){
+	                                     $.messager.alert('提示信息','模板数据不完整,请先完善!','warning');
+	                                 }else if(data == 'success'){
+	                                     $("#newDialog").dialog('destroy');
+	                                     $.messager.show({
+	                                                    title : '消息提示',
+														msg : '操作成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+										$('#dg').datagrid('reload');
+										//$('#dg').datagrid('clearSelections');
+	                                 }
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+		
+	  function importExcel(){
+	     $('<div></div>').dialog({
+            id : 'newDialog',
+            title : '产品信息导入',
+            width:400,
+            height:200,
+            closed : false,
+            cache : false,
+            href : '/hgerp/product/excelImport',
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '确定',
+                iconCls : 'icon-ok',
+                handler : function() {
+                     $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                      });
+                	$('#fm').form('submit', { 
+	                               url: '/hgerp/product/doExcelImport',
+	                               onSubmit: function(){
+		                             var isValid = $(this).form('validate');
+		                             if(!isValid){
+		                               $.messager.progress('close');
+		                             }
+		                             return isValid;	// return false will stop the form submission
+	                              },
+	                              success: function(data){
+	                                 $.messager.progress('close');
+	                                 if(data == 'repeat'){
+	                                     $.messager.alert('提示信息','系统里面已经包含相同的(锻件编号+序号)!','warning');
+	                                 }else if(data == 'selfRepeat'){
+	                                     $.messager.alert('提示信息','导入的excel文件中(锻件编号+序号)有重复!','warning');
+	                                 }else if(data == 'fileNotUpload'){
+	                                     $.messager.alert('提示信息','请先上传文件!','warning');
+	                                 }else if(data == 'sheetNotExists'){
+	                                     $.messager.alert('提示信息','sheet页不存在!','warning');
+	                                 }else if(data == 'fileNotExist'){
+	                                     $.messager.alert('提示信息','上传文件因格式不正确已被自动清理,请调整后重新上传!','warning');
+	                                     $("#newDialog").dialog('destroy');
+	                                 }else if(data == 'success'){
+	                                     $("#newDialog").dialog('destroy');
+	                                     $.messager.show({
+	                                                    title : '消息提示',
+														msg : '操作成功！',
+														timeout : 1000,
+														showType : 'slide',
+														style : {
+															right : '',
+															bottom : ''
+														}
+										});
+										$('#dg').datagrid('reload');
+	                                 }
+	                              }
+                     });
+                }
+            }, {
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+	  
+	 function nextElement(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length==0){
+	       $.messager.alert('提示信息', '请至少选择一条数据!', 'warning');
+	       return false;
+	    }
+	    var ids = "";
+		for (var x = 0; x < rows.length; x++) {
+		  if (x == 0) {
+			  ids = rows[x].id;
+		  } else {
+			  ids = ids + "," + rows[x].id;
+		  }
+		 }
+		 $.messager.confirm('提示信息', '确定继续操作吗?', function(r){
+				if (r){
+				    $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                    });
+					$.ajax({
+									type : "POST",
+									url : "/hgerp/product/nextElement",
+									data : {
+										ids : ids
+									},
+									success : function(data) {
+									   $.messager.progress('close');
+									   if(data=='success'){
+									     $.messager.show({
+											title : '消息提示',
+											msg : '操作成功！',
+											timeout : 1000,
+											showType : 'slide',
+											style : {
+												right : '',
+												bottom : ''
+											}
+										});
+										$('#dg').datagrid('clearSelections');
+										$('#dg').datagrid('reload');//
+									   }else{
+									      $.messager.alert('提示信息', '还未绑定工序!', 'warning');
+									   }
+									}
+								})
+				}
+			});
+	  }
+	  
+	 function removeProd(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length==0){
+	       $.messager.alert('提示信息', '请至少选择一条数据!', 'warning');
+	       return false;
+	    }
+	    var ids = "";
+		for (var x = 0; x < rows.length; x++) {
+		  if (x == 0) {
+			  ids = rows[x].id;
+		  } else {
+			  ids = ids + "," + rows[x].id;
+		  }
+		 }
+		 $.messager.confirm('提示信息', '确定继续操作吗?', function(r){
+				if (r){
+					$.ajax({
+									type : "POST",
+									url : "/hgerp/product/deleteProduct",
+									data : {
+										ids : ids
+									},
+									success : function(data) {
+									   if(data=='success'){
+									     $.messager.show({
+											title : '消息提示',
+											msg : '操作成功！',
+											timeout : 1000,
+											showType : 'slide',
+											style : {
+												right : '',
+												bottom : ''
+											}
+										});
+										$('#dg').datagrid('clearSelections');
+										$('#dg').datagrid('reload');//
+									   }else{
+									      $.messager.alert('提示信息', '还未绑定工序!', 'warning');
+									   }
+									}
+								})
+				}
+			});
+	  }
+	  
+	  $.extend($.fn.datagrid.methods, {
+			editCell: function(jq,param){
+				return jq.each(function(){
+					var opts = $(this).datagrid('options');
+					var fields = $(this).datagrid('getColumnFields',true).concat($(this).datagrid('getColumnFields'));
+					for(var i=0; i<fields.length; i++){
+						var col = $(this).datagrid('getColumnOption', fields[i]);
+						col.editor1 = col.editor;
+						if (fields[i] != param.field){
+							col.editor = null;
+						}
+					}
+					$(this).datagrid('beginEdit', param.index);
+					for(var i=0; i<fields.length; i++){
+						var col = $(this).datagrid('getColumnOption', fields[i]);
+						col.editor = col.editor1;
+					}
+				});
+			}
+		});
+	  
+	  var editIndex = undefined;
+		function endEditing(){
+			if (editIndex == undefined){return true}
+			if ($('#dg').datagrid('validateRow', editIndex)){
+				$('#dg').datagrid('endEdit', editIndex);
+				var rows = $('#dg').datagrid('getRows');
+                 var row = rows[editIndex];
+                 $.post("/hgerp/product/update",row,function(result){
+                    
+                 });
+				editIndex = undefined;
+				return true;
+			} else {
+				return false;
+			}
+		}
+		function onClickCell(index, field){
+			if (endEditing()){
+				$('#dg').datagrid('selectRow', index)
+						.datagrid('editCell', {index:index,field:field});
+				var editor = $('#dg').datagrid('getEditor', {index:index,field:field});
+                 if(editor != undefined&&editor!=null){
+                    editor.target.focus();
+                 }
+				editIndex = index;
+			}
+		}
+
+		/*]]>*/
+</script>
+</body>
+</html>

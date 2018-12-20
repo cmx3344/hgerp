@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${bean.id}" name="id"/>
+			 <div class="fitem">
+			<label>备注:</label>
+			<input class="easyui-textbox" name="remarks" required="true" th:value="${bean.remarks}" data-options="multiline:true" style="width:300px;height:100px" />
+	        </div>
+</form>
+</body>
+</html>

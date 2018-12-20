@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 98%;">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body style="height: 98%;">
+<div th:include="/common/common_head::onloadJs" ></div>
+ <div id="container" style="width:50%; height: 98%; float: left;"></div>
+ <div id="container2" style="width: 50%; height: 98%; float: left;"></div>
+</body>
+<script type="text/javascript">
+ /*<![CDATA[*/
+ 
+ function initData(data){
+   Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '海锅锻件数量分布情况'
+    },
+    xAxis: {
+        categories: ['下料', '锻造', '锻后热处理', '粗加工', '性能热处理','取样','交货加工','后续热处理','半精加工','精加工'],
+        title: {
+            text: '生产工序',
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+            }
+        },
+        crosshair:true
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '产品数量(件)',
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+            }
+        },
+        stackLabels: {
+            enabled: true,
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+                //color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+        }
+    },
+    legend: {
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 25,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>共: {point.stackTotal}',
+        style:{
+                  fontSize:'15px'
+              }
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black',
+                style:{
+                 // fontSize:'12px',
+                  textOutline:'none'
+                 }
+            }
+        }
+    },
+    series: [{
+        name: '本厂',
+        data: data.self
+    }
+    , {
+        name: '外协',
+        data: data.out
+    }
+    ]
+  });
+  
+  
+    Highcharts.chart('container2', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '海锅锻件重量分布情况'
+    },
+    xAxis: {
+        categories: ['下料', '锻造', '锻后热处理', '粗加工', '性能热处理','取样','交货加工','后续热处理','半精加工','精加工'],
+        title: {
+            text: '生产工序',
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '重量(吨)',
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+            }
+        },
+        stackLabels: {
+            enabled: true,
+            style: {
+                fontWeight: 'bold',
+                fontSize:'15px'
+                //color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+        }
+    },
+    legend: {
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 25,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+      //  borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>共: {point.stackTotal}',
+        style:{
+                  fontSize:'15px'
+              }
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black',
+                style:{
+                  //fontSize:'12px',
+                  textOutline:'none'
+                 }
+            }
+        }
+    },
+    series: [{
+        name: '本厂',
+        data: data.self2
+    }
+    , {
+        name: '外协',
+        data: data.out2
+    }
+    ]
+  });
+}
+        $(function(){
+           $.ajax({
+              url:'/hgerp/product/getProductData',
+              success:function(data){
+                 initData(data);
+              }
+           })
+        
+        })
+      /*]]>*/
+</script>
+</html>

@@ -1,0 +1,22 @@
+2018-11-16 09:21:35.885 [http-nio-8080-exec-6] ERROR o.a.coyote.http11.Http11NioProcessor -Error processing request
+java.lang.NullPointerException: null
+	at org.apache.catalina.core.StandardHostValve.custom(StandardHostValve.java:419) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.catalina.core.StandardHostValve.status(StandardHostValve.java:305) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.catalina.core.StandardHostValve.throwable(StandardHostValve.java:399) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:160) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:79) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:88) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:518) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1091) ~[tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:673) [tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1500) [tomcat-embed-core-8.0.28.jar:8.0.28]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.run(NioEndpoint.java:1456) [tomcat-embed-core-8.0.28.jar:8.0.28]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145) [na:1.7.0_45]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615) [na:1.7.0_45]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-8.0.28.jar:8.0.28]
+	at java.lang.Thread.run(Thread.java:744) [na:1.7.0_45]
+2018-11-16 09:57:02.112 [http-nio-8080-exec-4] ERROR o.h.e.jdbc.spi.SqlExceptionHelper -sql injection violation, syntax error: syntax error, error in :' = 5 a.out_side_in_date+0 asc limit',expect IDENTIFIER, actual IDENTIFIER a : select a.*,c.chn_name from product a join process_temp_son b on a.temp_son_id=b.id join sys_process c on b.process_id=c.id where a.state = 10 and c.id = 5 a.out_side_in_date+0 asc limit 0,500
+2018-11-16 09:57:02.507 [http-nio-8080-exec-2] ERROR o.h.e.jdbc.spi.SqlExceptionHelper -sql injection violation, syntax error: syntax error, error in :' = 5 a.out_side_in_date+0 desc limi',expect IDENTIFIER, actual IDENTIFIER a : select a.*,c.chn_name from product a join process_temp_son b on a.temp_son_id=b.id join sys_process c on b.process_id=c.id where a.state = 10 and c.id = 5 a.out_side_in_date+0 desc limit 0,500
+2018-11-16 09:57:02.679 [http-nio-8080-exec-8] ERROR o.h.e.jdbc.spi.SqlExceptionHelper -sql injection violation, syntax error: syntax error, error in :' = 5 a.out_side_in_date+0 asc limit',expect IDENTIFIER, actual IDENTIFIER a : select a.*,c.chn_name from product a join process_temp_son b on a.temp_son_id=b.id join sys_process c on b.process_id=c.id where a.state = 10 and c.id = 5 a.out_side_in_date+0 asc limit 0,500
+2018-11-16 09:57:03.189 [http-nio-8080-exec-5] ERROR o.h.e.jdbc.spi.SqlExceptionHelper -sql injection violation, syntax error: syntax error, error in :' = 5 a.out_side_in_date+0 desc limi',expect IDENTIFIER, actual IDENTIFIER a : select a.*,c.chn_name from product a join process_temp_son b on a.temp_son_id=b.id join sys_process c on b.process_id=c.id where a.state = 10 and c.id = 5 a.out_side_in_date+0 desc limit 0,500
+2018-11-16 09:58:24.369 [http-nio-8080-exec-3] ERROR o.h.e.jdbc.spi.SqlExceptionHelper -sql injection violation, syntax error: syntax error, error in :' = 5 a.out_side_in_date+0 desc limi',expect IDENTIFIER, actual IDENTIFIER a : select a.*,c.chn_name from product a join process_temp_son b on a.temp_son_id=b.id join sys_process c on b.process_id=c.id where a.state = 10 and c.id = 5 a.out_side_in_date+0 desc limit 0,500

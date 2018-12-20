@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<table class="gridtable" style="width: 100%;">
+   <tr>
+      <td style="height: 30px;">标题</td><td th:text="${bean.subject}" colspan="3" style="text-align: left;"></td>
+   </tr>
+   <tr>
+      <td style="height: 30px;">发起人</td><td th:text="${bean.operator}"></td><td>发起时间</td><td th:text="${bean.messageTime}"></td>
+   </tr>
+   <tr>
+   <td >内容</td><td  colspan="3" style="height: 150px;">
+   <textarea rows="" cols="" th:text="${bean.message}" readonly="readonly" style="font-size: 16px;text-indent: 2em;border: 0px;width: 98%;height: 98%;"></textarea>
+   </td>
+   </tr>
+</table>
+
+<table>
+  <tr><th>附件</th></tr>
+  <tr th:each="file : ${list}">
+    <td><a th:text="${file.fileName}" th:href="${'/hgerp/api/user/download?id='+file.id}" target="_blank"></a></td>
+  </tr>
+</table>
+</body>
+</html>

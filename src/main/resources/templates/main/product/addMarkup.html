@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${ids}" name="ids"/>
+			<div class="fitem">
+			<label>标记颜色:</label>
+			<select class="easyui-combobox" name="opState" editable="false" style="width:200px;">
+			  <option value="">清除</option>
+			  <option value="1">黄色</option>
+		      <option value="2">粉红色</option>
+		      <option value="3">灰色</option>
+	        </select>
+	        </div>
+</form>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" style="width:auto;height:100%;" 
+			url="/hgerp/product/getProductList?tempSonId=7" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',pagination:true,pageSize:500,pageList: [100,200,500,1000],toolbar:'#tb',onClickCell: onClickCell"
+			rownumbers="true" fit="true" singleSelect="false" showRefresh="true">
+		<thead frozen="true">
+			<tr>
+				<th data-options="field:'ck',checkbox:true,styler:cellStyler2"></th>
+				<th data-options="field:'serial_num',width:120,styler:cellStyler">锻件编号</th>
+				<th data-options="field:'order_num',width:60">序号</th>
+			</tr>
+		</thead>
+		<thead>
+			<tr>
+			    <th data-options="field:'rough_maching_worker',width:100,editor:'text'">加工方</th>
+			    <!-- <th data-options="field:'rough_maching_weight',width:100,editor:'text'">粗车重量</th> -->
+				<th data-options="field:'rough_maching_in_date',width:100,sortable:true">粗加工转入</th>
+				<th data-options="field:'ispsa',width:80,editor:'text'">是否喷砂</th>
+			    <th data-options="field:'po_date',width:70">合同交货期</th>
+				<th data-options="field:'po_update_date',width:70">更改交货期</th>
+			    <th data-options="field:'remarksa',width:80">备注1</th>
+				<th data-options="field:'remarksb',width:80">备注2</th>
+			    <th data-options="field:'material',width:80">材质</th>
+				<th data-options="field:'grade',width:50">等级</th>
+			    <th data-options="field:'sizea',width:30"></th>
+				<th data-options="field:'sizeb',width:50"></th>
+				<th data-options="field:'sizec',width:30"></th>
+				<th data-options="field:'sized',width:50"></th>
+				<th data-options="field:'sizee',width:30"></th>
+				<th data-options="field:'sizef',width:50"></th>
+				<th data-options="field:'sizeg',width:30"></th>
+				<th data-options="field:'sizeh',width:50"></th>
+			    <th data-options="field:'po_qty',width:80">订单总数</th>
+				<th data-options="field:'blank_weight',width:70">下料重</th>
+				<th data-options="field:'qty',width:70">生产数量</th>
+				<th data-options="field:'description',width:100">说明</th>
+				<th data-options="field:'quality_require',width:100">质量要求</th>
+				<th data-options="field:'ndt_require',width:100">探伤要求</th>
+				<th data-options="field:'delivery_state',width:100">交货状态</th>
+				<th data-options="field:'ht_require',width:80">热处理要求</th>
+				<th data-options="field:'ht_requireb',width:100"></th>
+				<th data-options="field:'hdns_require',width:100">硬度要求</th>
+				<th data-options="field:'next_process',width:100">后续工序</th>
+				<th data-options="field:'other_require',width:100">其他要求</th>
+				<th data-options="field:'forging_equip',width:100">锻造工艺设备</th>
+				<th data-options="field:'material_num',width:100">物料号</th>
+				<th data-options="field:'dwg_num',width:100">图号</th>
+				<th data-options="field:'product_num',width:80">生产编号</th>
+				<th data-options="field:'code',width:40">代号</th>
+				<th data-options="field:'po_num',width:60">合同编号</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="tb" style="height:auto,padding:5px;">
+	   <input type="hidden" id="type" th:value="${type}" />
+		<div style="margin:5px">
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="nextProcess(1)">送检</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-redo" onclick="outside()">外协</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="split()">拆分</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="toBatchEdit(4)">批量编辑</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-undo" onclick="nextProcess(14)">退回到调度</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-print" onclick="exportjg()">导出金工施工单</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="addMarkup()">添加标记</a>
+		<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-edit" onclick="toUpdateOrderNum()">修改序号及数量</a>
+			<input class="easyui-textbox" data-options="prompt:'锻件编号'" style="width:150px;height:32px" id="serialNum" /> 
+			<input class="easyui-datebox" data-options="prompt:'转入日期'" style="width:150px;height:32px" id="roughMachingInDate" />
+			<input class="easyui-textbox" data-options="prompt:'交货期(格式:18-01)'" style="width:120px;height:32px" id="poDate"/>
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+		</div>
+	</div>
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	  
+	     function doSearch(value, name) {
+	        endEditing();
+			$('#dg').datagrid('load', {
+				serialNum : $("#serialNum").val(),
+				roughMachingInDate:$("#roughMachingInDate").val(),
+				poDate:$("#poDate").val()
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+		
+		$.extend($.fn.datagrid.methods, {
+		   editCell: function(jq,param){
+				return jq.each(function(){
+					var opts = $(this).datagrid('options');
+					var fields = $(this).datagrid('getColumnFields',true).concat($(this).datagrid('getColumnFields'));
+					for(var i=0; i<fields.length; i++){
+						var col = $(this).datagrid('getColumnOption', fields[i]);
+						col.editor1 = col.editor;
+						if (fields[i] != param.field){
+							col.editor = null;
+						}
+					}
+					$(this).datagrid('beginEdit', param.index);
+					for(var i=0; i<fields.length; i++){
+						var col = $(this).datagrid('getColumnOption', fields[i]);
+						col.editor = col.editor1;
+					}
+				});
+			}
+		});
+	  
+	  var editIndex = undefined;
+	  function endEditing(){
+			if (editIndex == undefined){return true}
+			if ($('#dg').datagrid('validateRow', editIndex)){
+				$('#dg').datagrid('endEdit', editIndex);
+				var rows = $('#dg').datagrid('getRows');
+                 var row = rows[editIndex];
+                 if(row){
+                     row.roughMachingWorker=row.rough_maching_worker;
+                     row.roughMachingInDate = row.rough_maching_in_date;
+                     row.roughMachingOutDate = row.rough_maching_out_date;
+                     row.roughMachingWeight = row.rough_maching_weight;
+                     row.roughMachingOutRemark = row.rough_maching_out_remark;
+                     row.roughMachingOutCom = row.rough_maching_out_com;
+                     $.post("/hgerp/product/editMore?ptype=4",row,function(result){
+                    
+                     });
+                 }
+				editIndex = undefined;
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		function onClickCell(index, field){
+			if (endEditing()){
+				$('#dg').datagrid('selectRow', index)
+						.datagrid('editCell', {index:index,field:field});
+				var editor = $('#dg').datagrid('getEditor', {index:index,field:field});
+				if(editor != undefined&&editor!=null){
+				 editor.target.focus(); 
+				}
+				editIndex = index;
+			}
+		}
+		
+		function cellStyler(value,row,index){
+			if (row.op_state==1){
+				return 'background-color:#ffee00;color:red;';
+			}
+			if (row.op_state == 2){
+				  return 'background-color:pink;color:blue;';
+			}
+			if (row.op_state == 3){
+				  return 'background-color:#eee;color:blue;';
+			 }
+		}
+		function cellStyler2(value,row,index){
+			if (row.isback==1){
+				return 'background-color:blue;color:white;';
+			}
+			if (row.isback==2){
+				return 'background-color:yellow;';
+			}
+		}
+		/*]]>*/
+</script>
+</body>
+</html>

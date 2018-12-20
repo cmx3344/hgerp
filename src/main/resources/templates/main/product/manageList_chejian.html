@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" layoutH="0" style="width:auto;height:100%;" 
+			url="/hgerp/product/getManageList" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',pagination:true,pageSize:200,pageList: [100,200,500,1000],toolbar:'#tb'"
+			rownumbers="true" fit="true" singleSelect="false" showRefresh="true">
+		<thead frozen="true">
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'po_date',width:70">合同交货期</th>
+				<th data-options="field:'po_update_date',width:70,editor:'datebox'">更改交货期</th>
+				<th data-options="field:'remarksa',width:30">备注1</th>
+				<th data-options="field:'remarksb',width:30">备注2</th>
+				<th data-options="field:'material',width:80">材质</th>
+				<th data-options="field:'grade',width:30">等级</th>
+				<th data-options="field:'serial_num',width:120">锻件编号</th>
+				<th data-options="field:'order_num',width:45">序号</th>
+				<th data-options="field:'chn_name',width:70,formatter:formatterstate">当前工序</th>
+				<th data-options="field:'prev_process',width:70">上道工序</th>
+				<th data-options="field:'sizea',width:20"></th>
+				<th data-options="field:'sizeb',width:40"></th>
+				<th data-options="field:'sizec',width:30"></th>
+				<th data-options="field:'sized',width:40"></th>
+				<th data-options="field:'sizee',width:20"></th>
+				<th data-options="field:'sizef',width:40"></th>
+				<th data-options="field:'sizeg',width:20"></th>
+				<th data-options="field:'sizeh',width:30"></th>
+			    <th data-options="field:'po_qty',width:40">订单总数</th>
+				<th data-options="field:'blank_weight',width:40">下料重</th>
+				<th data-options="field:'act_unit_weight',width:40">单重</th>
+				<th data-options="field:'qty',width:40">生产数量</th>
+				<th data-options="field:'description',width:40">说明</th>
+				
+			</tr>
+		</thead>
+		<thead>
+			<tr><th data-options="field:'break_num',width:100">破坏件号</th>
+                <th data-options="field:'quality_require',width:100">质量要求</th>
+				<th data-options="field:'ndt_require',width:100">探伤要求</th>
+				<th data-options="field:'delivery_state',width:100">交货状态</th>
+				<th data-options="field:'ht_require',width:80">热处理要求</th>
+				<th data-options="field:'ht_requireb',width:60"></th>
+				<th data-options="field:'next_process',width:100">后续工序</th>
+				<th data-options="field:'hdns_require',width:60">硬度要求</th>
+				<th data-options="field:'other_require',width:100">其他要求</th>
+				<th data-options="field:'forging_equip',width:100">锻造工艺设备</th>
+				<th data-options="field:'material_num',width:100">物料号</th>
+				<th data-options="field:'dwg_num',width:150">图号</th>
+				<th data-options="field:'start_date',width:80">下达日期</th>
+				<th data-options="field:'blank_datea',width:80">下料出坯</th>
+				<th data-options="field:'blank_remarka',width:80">下料出坯备注</th>
+				<th data-options="field:'forging_in_datea',width:80">锻造出坯投入</th>
+				<th data-options="field:'forging_out_datea',width:80">锻造出坯转出</th>
+				<th data-options="field:'heat_treat_in_datea',width:80">热处理出坯投入</th>
+				<th data-options="field:'heat_treat_out_datea',width:80">热处理出坯转出</th>
+				<th data-options="field:'blank_date',width:80">下料日期</th>
+				<th data-options="field:'blank_remark',width:100">下料备注</th>
+				<th data-options="field:'heat_num',width:100">下料炉号</th>
+				<th data-options="field:'forging_worker',width:60">加工方</th>
+				<th data-options="field:'forging_in_date',width:80">锻造转入</th>
+				<th data-options="field:'forging_out_date',width:80">锻造转出</th>
+				<th data-options="field:'after_forging_worker',width:60">加工方</th>
+				<th data-options="field:'after_forging_in_date',width:80">锻后热处理入</th>
+				<th data-options="field:'atter_forging_out_date',width:80">锻后热处理出</th>
+				<th data-options="field:'rough_maching_worker',width:60">加工方</th>
+				<th data-options="field:'rough_maching_in_date',width:80">粗加工入</th>
+				<th data-options="field:'rough_maching_out_date',width:80">粗加工出</th>
+				<th data-options="field:'per_heat_treat_worker',width:60">加工方</th>
+				<th data-options="field:'per_heat_treat_in_date',width:80">性能热处理入</th>
+				<th data-options="field:'per_heat_treat_out_date',width:80">性能热处理出</th>
+				<th data-options="field:'sample_in_date',width:80">取样转入</th>
+				<th data-options="field:'sample_out_date',width:80">取样转出</th>
+				<th data-options="field:'delivery_worker',width:60">加工方</th>
+				<th data-options="field:'delivery_in_date',width:80">交货加工入</th>
+				<th data-options="field:'delivery_out_date',width:80">交货加工出</th>
+				<th data-options="field:'followup_worker',width:60">加工方</th>
+				<th data-options="field:'followup_in_date',width:80">后续热处理入</th>
+				<th data-options="field:'followup_out_date',width:80">后续热处理出</th>
+				<th data-options="field:'half_finish_maching_worker',width:60">加工方</th>
+				<th data-options="field:'half_finish_maching_in_date',width:80">半精加工入</th>
+				<th data-options="field:'half_finish_maching_out_date',width:80">半精加工出</th>
+				<th data-options="field:'finish_maching_worker',width:60">加工方</th>
+				<th data-options="field:'finish_maching_in_date',width:80">精加工入</th>
+				<th data-options="field:'finish_maching_out_date',width:80">精加工出</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="tb" style="height:auto,padding:5px;">
+	   <input type="hidden" id="type" th:value="${type}" />
+		<div style="margin:5px">
+		     <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-menu" onclick="showProcess()">查看工艺路线</a>
+		     <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-print" onclick="exportAfterForging()">导出锻后热处理施工单</a>
+		     <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-print" onclick="exportAllInfos()">导出滚动表</a>
+		     <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-menu" onclick="showOperateRecord()">操作记录</a>
+		     <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-add" onclick="addSample()">新增试样</a>
+			<input class="easyui-textbox" data-options="prompt:'锻件编号'" style="width:120px;height:32px" id="serialNum" />
+			<input class="easyui-textbox" data-options="prompt:'序号'" style="width:60px;height:32px" id="orderNum" />  
+			<input class="easyui-textbox" data-options="prompt:'材质'" style="width:100px;height:32px" id="material" /> 
+			状态<select id="state">
+			   <option></option>
+			   <option value="7">返工</option>
+			   <option value="8">报废</option>
+			   <option value="6">待入库</option>
+			</select>
+			<select class="easyui-combobox" style="width: 120px;" id="processIdB">
+		   <option value="">空</option>
+		   <option value="4">下料</option>
+		   <option value="5">锻造</option>
+		   <option value="6">锻后热处理</option>
+		   <option value="7">粗加工</option>
+		   <option value="13">取样</option>
+		   <option value="8">性能热处理</option>
+		   <option value="9">交货加工</option>
+		   <option value="10">后续热处理</option>
+		   <option value="11">半精加工</option>
+		   <option value="12">精加工</option>
+		   </select>
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+			<a href="javascript:;" class="easyui-linkbutton" iconCls="icon-search" onclick="$('#dlg').dialog('open')">高级检索</a>
+		</div>
+	</div>
+    <div id="dlg" class="easyui-dialog" title="高级检索" data-options="iconCls:'icon-save',buttons: [{
+					text:'检索',
+					iconCls:'icon-reload',
+					handler:function(){
+						doSearch()
+					}
+				},{
+					text:'清空内容',
+					iconCls:'icon-remove',
+					handler:function(){
+					    $('#startDate,#endDate').textbox('setValue','');
+					    $('#poDate').textbox('setValue','');
+					}
+				},{
+					text:'关闭',
+					iconCls:'icon-cancel',
+					handler:function(){
+						$('#dlg').dialog('close');
+						$('#startDate,#endDate').textbox('setValue','');
+					    $('#poDate').textbox('setValue','')
+					}
+				}]" closed="true" style="width:800px;height:300px;padding:10px">
+		<table>
+		 <tr>
+		    <td>对应工序</td>
+		    <td>
+		    <select class="easyui-combobox" style="width: 120px;" id="processId">
+		   <option value="">空</option>
+		   <option value="1">下达日期</option>
+		   <option value="4">下料</option>
+		   <option value="5">锻造</option>
+		   <option value="6">锻后热处理</option>
+		   <option value="7">粗加工</option>
+		   <option value="13">取样</option>
+		   <option value="8">性能热处理</option>
+		   <option value="9">交货加工</option>
+		   <option value="10">后续热处理</option>
+		   <option value="11">半精加工</option>
+		   <option value="12">精加工</option>
+		   </select></td>
+		   </tr>
+		    <tr>
+		   <td>转入日期:</td><td><input class="easyui-datebox" style="width: 250px;" id="startDate"/></td>
+		   <td>~<input class="easyui-datebox" style="width: 250px;" id="startDateB"/></td>
+		   </tr>
+		   <tr>
+		   <td>转出日期:</td><td><input class="easyui-datebox" style="width: 250px;" id="endDate"/></td>
+		  <td>~<input class="easyui-datebox" style="width: 250px;" id="endDateB"/></td>
+		   </tr>
+		   <tr>
+		   <td>交货期:</td><td><input class="easyui-datebox" style="width: 250px;" id="poDate"/></td>
+		   <td>~<input class="easyui-datebox" style="width: 250px;" id="poDateB"/></td>
+		   </tr>
+		   <tr>
+		   <td colspan="3" style="color: red;">
+		           注:如需按日期查询仅需填写第一个空格，如需查询日期范围请填写前后两个空格
+		   </td>
+		   </tr>
+		   <tr>
+		   <td>加工方:</td><td><input class="easyui-textbox" style="width: 250px;" id="forgingWorker"/></td>
+		   </tr>
+		</table>
+	</div>
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	  function formatterstate(val,row){
+	     if(row.state==4){
+	       return "<span style='font-weight:600'>"+val+"(检验)</span>";
+	     }
+	     if(row.state==6){
+	       return "<span style='background:green;color:white;font-weight:600'>待入库</span>";
+	     }
+	     if(row.state==7){
+	       return "<span style='background:yellow;font-weight:600'>返工</span>";
+	     }
+	     if(row.state==8){
+	       return "<span style='background:red;color:white;font-weight:600'>报废</span>";
+	     }
+	     if(row.state==10||row.state==18){
+	       return "<span style='font-weight:600'>"+val+"</span>";
+	     }
+	     if(row.state==11){
+	       return "<span style='font-weight:600'>"+val+"(调度)</span>";
+	     }
+	     if(row.state==12){
+	       return "<span style='font-weight:600'>车加工取样</span>";
+	     }
+	     if(row.state==13){
+	       return "<span style='font-weight:600'>暂停</span>";
+	     }
+	     if(row.state==15){
+	       return "<span style='font-weight:600;background:blue;color:white;'>临时库</span>";
+	     }
+	     if(row.state==20){
+	       return "<span style='color:red;font-weight:600'>"+val+"(申请)</span>";
+	     }
+	     if(row.state==21){
+	       return "<span style='background:yellow;font-weight:600'>返修</span>";
+	     }
+	     if(row.state==22){
+	       return "<span style='color:red;font-weight:600'>退货</span>";
+	     }
+	     return "<span style='font-weight:600'>"+val+"</span>";
+	  }
+	  
+	    function cellStyler(value,row,index){
+			if (value){
+				return 'background-color:#eee;color:red;';
+			}
+		}
+	  
+	  function doSearch() {
+			$('#dg').datagrid('load', {
+				serialNum : $("#serialNum").val(),
+				orderNum : $("#orderNum").val(),
+				state : $("#state").val(),
+				processId : $("#processId").val(),
+				processIdB : $("#processIdB").val(),
+				startDate : $("#startDate").val(),
+				endDate : $("#endDate").val(),
+				startDateB : $("#startDateB").val(),
+				endDateB : $("#endDateB").val(),
+				material : $("#material").val(),
+				poDate : $("#poDate").val(),
+				forgingWorker : $("#forgingWorker").val()
+			});
+			$('#dg').datagrid('clearSelections');
+		}
+  
+  		$(function (){
+		   $('#dg').datagrid({
+		     rowStyler:function(index,row){
+			   if (row.iscp == 1){
+				  return 'background-color:pink;color:blue;';
+			  }
+		    }
+	      });
+		})
+		
+	function showProcess(){
+	    var rows = $("#dg").datagrid('getSelections');
+	    if(rows.length!=1){
+	       $.messager.alert('提示信息', '请选择一条数据进行操作!', 'warning');
+	       return false;
+	    }
+		 	$('<div></div>').dialog({
+            id : 'newDialog',
+            title : "设置工序",
+            width:500,
+            height:450,
+            closed : false,
+            cache : false,
+            href : "/hgerp/product/showProcess?id="+rows[0].id,
+            modal : true,
+            onLoad : function() {
+                //初始化表单数据
+            },
+            onClose : function() {
+                $(this).dialog('destroy');
+            },
+            buttons : [{
+                text : '关闭',
+                iconCls : 'icon-cancel',
+                handler : function() {
+                    $("#newDialog").dialog('destroy');
+                }
+            } ],
+
+        });
+	  }
+		/*]]>*/
+</script>
+</body>
+</html>

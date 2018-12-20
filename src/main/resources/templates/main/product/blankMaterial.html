@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body >
+<style type="text/css">
+   .gridtable td,.gridtable th{
+      font-size: 12px;
+      font-weight: bold;
+   }
+</style>
+<script type="text/javascript">
+ var vm2 = undefined;
+$(function(){
+   vm2 = new Vue({
+   el: '#materialsss',
+   data: {
+    xxxxxxxxx: []
+  }
+  })
+})
+$(function(){
+                    $.messager.progress({ 
+                                  title: '提示', 
+                                  msg: '加载中，请稍候……', 
+                                  text: '' 
+                    });
+             $.ajax({
+              url:'/hgerp/product/getInfoByMaterial',
+              success:function(data){
+                $.messager.progress('close');
+                vm2.$set(vm2.$data,"xxxxxxxxx",data);
+               // $("#xxx").html(data);
+              }
+           })
+          })
+</script>
+
+   <table id="materialsss" class="gridtable" style="width: 100%;">
+     <tr>
+        <th>材质</th><th>件数</th><th>重量</th>
+     </tr>
+     <tr v-for="obj in xxxxxxxxx">
+        <td>{{ obj.material }}</td><td>{{ obj.qty }}</td><td>{{ obj.weight }}</td>
+     </tr>
+   </table>
+</body>
+</html>

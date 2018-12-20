@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${bean?.id}" name="id"/>
+			<div class="fitem">
+			<label>工序名:</label> <input name="chnName" class="easyui-textbox" th:value="${bean?.chnName}" required="true"/>
+			</div>
+			<div class="fitem">
+			<label>英文名:</label> <input name="engName" type="text" class="easyui-textbox" th:value="${bean?.engName}"/>
+			</div>
+			<div class="fitem">
+			<label>用户状态:</label>
+			<select class="easyui-combobox" name="state" editable="false" style="width:200px;">
+			  <option value="1" th:selected="${bean?.state==1}">启用</option>
+		      <option value="2" th:selected="${bean?.state==2}">停用</option>
+	        </select>
+	        </div>
+</form>
+</body>
+</html>

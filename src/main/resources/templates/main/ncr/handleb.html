@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${id}" name="id"/>
+			<input type="hidden" th:value="${ncrSonId}" name="ncrSonId"/>
+			 
+			<div class="fitem">
+			 <label>处理方式:</label>
+			   <select name="handleType" class="easyui-combobox" data-options="onSelect:onSelects">
+			     <option value="1">返工</option>
+			     <option value="2">报废</option>
+			     <option value="3">让步</option>
+			     <option value="4">申请</option>
+			     <option value="5">返修</option>
+			     <option value="6">退货</option> 
+			   </select>
+	        </div>
+	        <div id="conts">
+	        <div class="fitem">
+			 <label>返回的工序:</label>
+			   <select name="tempSonId" class="easyui-combobox">
+			     <option  th:each="n:${list}" th:value="${n.id}" th:text="${n.procName }"></option>
+			   </select>
+	        </div>
+	        <div class="fitem">
+	            <select class="easyui-combobox" style="width:150px;" name="state">
+				   <option value="3">正常工序</option>
+				   <option value="10">外协</option>
+				   <option value="11">调度</option>
+				   <option value="4">检验</option>
+				   <option value="6">待入库</option>
+				</select>
+	        </div>
+	           <div class="fitem">
+			 <label>锻件编号:</label>
+			   <input class="easyui-textbox" name="serialNum" readonly="readonly" th:value="${bean?.serialNum}" style="width:300px;" />
+	        </div>
+	        <div class="fitem">
+			 <label>(返工/修)序号:</label>
+			   <input class="easyui-textbox" name="orderNum" th:value="${bean?.orderNum}" style="width:300px;" />
+	        </div>
+	        </div>
+	        
+	        <script type="text/javascript">
+	          function onSelects(record){
+	            if(record.value==1||record.value==5){
+	              $("#conts").show();
+	            }else{
+	              $("#conts").hide();
+	            }
+	          }
+	        </script>
+</form>
+</body>
+</html>

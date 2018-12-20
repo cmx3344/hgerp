@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form id="fm" method="post" target="myframe" >
+			<input type="hidden" th:value="${bean?.id}" name="id"/>
+			<table class="gridtable" style="width:100%;">
+			  <tr style="height: 25px;">
+			   <td>报告编号</td>
+			   <td th:text="${bean?.ncrNum}"></td>
+			   <td>状态</td>
+			   <td th:text="${bean?.fromProcess}"></td>
+			  </tr>
+			  <tr style="height: 25px;">
+			   <td>报告人</td>
+			   <td th:text="${bean?.reportPerson}"></td>
+			   <td>日期</td>
+			   <td th:text="${bean?.reportDate}"></td>
+			  </tr>
+			  <tr style="height: 25px;">
+			   <td>单位</td>
+			   <td th:text="${bean?.units}"></td>
+			   <td colspan="2"></td>
+			  </tr>
+			  <tr style="height: 25px;">
+			   <td>设备</td>
+			   <td th:text="${bean?.equipment}"></td>
+			   <td>不合格类型</td>
+			   <td th:text="${bean?.ncrType}"></td>
+			  </tr>
+			  <tr style="height: 25px;">
+			   <td>不合格原因</td>
+			   <td colspan="3" >
+			   <textarea rows="" cols="" readonly="readonly" style="width: 98%;height: 80px;border: 0;resize:none;" th:text="${bean?.reason}"></textarea>
+			   </td>
+			  </tr>
+			  <tr>
+			  <td>回单日期</td>
+			   <td><input class="easyui-datebox" name="backDate" style="width:150px;" /></td>
+			  <td>责任单位</td>
+			  <td><input class="easyui-textbox" name="responsibleDep" style="width:150px;" /></td>
+			  </tr>
+			  <tr>
+			  <td>执行单位</td>
+			  <td><input class="easyui-textbox" name="executeUnit" style="width:150px;" /></td>
+			  </tr>
+			  <templete  th:each="son,x: ${listSon}">
+			  <tr>
+			   <td>锻件编号</td>
+			   <td th:text="${son?.serialNum+'  /   '+son?.orderNum}" style="background: yellow;"></td>
+			    <td>处理方式</td>
+			    <td><select th:name="${'listSon['+x?.index+'].handleType'}" th:id="${x?.index}"  class="easyui-combobox" style="width:150px;" data-options="onSelect:onSelects">
+			     <option value="1">返工</option>
+			     <option value="2">报废</option>
+			     <option value="3">让步</option>
+			     <option value="4">申请</option>
+			     <option value="5">返修</option>
+			     <option value="6">退货</option>
+			   <!--   <option value="7">其他</option> -->
+			   </select>
+			   <input type="hidden" th:value="${son?.id}" th:name="${'listSon['+x?.index+'].id'}"/>
+			   <input type="hidden" th:value="${son?.parentId}"  th:name="${'listSon['+x?.index+'].parentId'}"/>
+			   <input type="hidden" th:value="${son?.productId}" th:name="${'listSon['+x?.index+'].productId'}"/>
+			   </td>
+			  </tr>
+			<!--   <tr th:id="${'conts'+x.index}">
+			    <td>选择工序</td>
+			    <td><select class="easyui-combobox" required="true" style="width:150px;" th:name="${'listSon['+x?.index+'].processId'}" >
+				   <option value="4">下料</option>
+				   <option value="5">锻造</option>
+				   <option value="6">锻后热处理</option>
+				   <option value="7">粗加工</option>
+				   <option value="8">性能热处理</option>
+				   <option value="13">取样</option>
+				   <option value="9">交货加工</option>
+				   <option value="10">后续热处理</option>
+				   <option value="11">半精加工</option>
+				   <option value="12">精加工</option>
+				</select>
+				</td>
+			    <td>选择状态</td>
+			    <td><select class="easyui-combobox" required="true" style="width:150px;" th:name="${'listSon['+x?.index+'].state'}">
+				   <option value="3">正常工序</option>
+				   <option value="10">外协</option>
+				   <option value="11">调度</option>
+				   <option value="4">检验</option>
+				   <option value="6">待入库</option>
+				</select>
+				</td>
+			  </tr> -->
+			  </templete>
+			  <tr>
+			    <td>备注</td>
+			    <td colspan="3">
+			      <input class="easyui-textbox" name="remarks" th:value="${bean?.handleOpinion}" data-options="multiline:true" style="width:100%;height:50px" />
+			    </td>
+			  </tr>
+			  <tr>
+			    <td>质量部审核</td>
+			    <td>
+			       <select name="examestart"  class="easyui-combobox" required="true" style="width:150px;">
+			        <option value="苏建明">苏建明</option>
+			       </select>
+			    </td>
+			    <td>技术部审核</td>
+			    <td>
+			       <input class="easyui-textbox" name="exameend" style="width:150px;" />
+			    </td>
+			  </tr>
+			</table>
+			
+			<div style="float: left;text-align: center;">
+			  <templete th:each="file:${listFile}">
+			     <img th:src="@{${file.file}}" style="max-width: 500px;"/>
+			  </templete>
+			</div>
+	       <!--  <table width="100%">
+	           <tr><td colspan="2" style="color: red;font-weight: bold;">附件</td></tr>
+	           <tr th:each="file:${listFile}">
+	               <td th:text="${file.name}"></td>
+	               <td><a th:href="@{'/ncr/download?id='+${file.id}}">下载</a></td>
+	           </tr>
+	        </table> -->
+	        
+	        <script type="text/javascript">
+	          function onSelects(record){
+	            var i = $(this).attr('id');
+	            if(record.value==1){
+	              $("#conts"+i).show();
+	            }else{
+	              $("#conts"+i).hide();
+	            }
+	          }
+	        </script>
+</form>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/common_head::commonHeader('首页')"></head>
+<body>
+<div th:include="/common/common_head::onloadJs" ></div>
+<table id="dg" class="easyui-datagrid" style="width:auto;height:100%;" 
+			url="/hgerp/product/getMachingRecord" method="get" idField="id"
+			data-options="loadMsg: '正在加载，请稍候...',pagination:true,pageSize:500,pageList: [100,200,500,1000],toolbar:'#tb'"
+			rownumbers="true" fit="true" singleSelect="false" showRefresh="true">
+		<thead>
+			<tr>
+				<th data-options="field:'serial_num',width:120">锻件编号</th>
+				<th data-options="field:'order_num',width:60">序号</th>
+				<th data-options="field:'company',width:120">外协单位</th>
+				<th data-options="field:'content',width:120">备注</th>
+				<th data-options="field:'process_name',width:80">操作工序</th>
+				<th data-options="field:'operator',width:80">操作人</th>
+				<th data-options="field:'op_time',width:100">操作时间</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="tb" style="height:auto,padding:5px;">
+	   <input type="hidden" id="type" th:value="${type}" />
+		<div style="margin:5px">
+			<input class="easyui-textbox" data-options="prompt:'锻件编号'" style="width:150px;height:32px" id="serialNum" /> 
+			<input class="easyui-textbox" data-options="prompt:'序号'" style="width:150px;height:32px" id="orderNum" /> 
+			<input class="easyui-textbox" data-options="prompt:'操作人'" style="width:150px;height:32px" id="operator" /> 
+			<input class="easyui-datebox" data-options="prompt:'操作时间'" style="width:150px;height:32px" id="opTime" /> 
+			<input class="easyui-textbox" data-options="prompt:'操作工序'" style="width:150px;height:32px" id="processName" /> 
+			<a href="javascript:;" class="easyui-linkbutton searchBtn" onclick="doSearch()" data-options="iconCls:'icon-reload'" style="width:60px">检索</a>
+		</div>
+	</div>
+
+<script type="text/javascript">
+	  /*<![CDATA[*/
+	     function doSearch(value, name) {
+			$('#dg').datagrid('load', {
+				serialNum : $("#serialNum").val(),
+				orderNum : $("#orderNum").val(),
+				operator : $("#operator").val(),
+				opTime : $("#opTime").val(),
+				processName : $("#processName").val()
+			});
+		}
+		/*]]>*/
+</script>
+</body>
+</html>
